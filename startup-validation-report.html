@@ -1,0 +1,2665 @@
+<style>
+  :root{
+    --bg-0:#0a0b0d;
+    --bg-1:#0f1113;
+    --bg-2:#15171b;
+    --bg-3:#1c1f24;
+    --bg-glass:rgba(21,23,27,0.6);
+    --border-faint:rgba(255,255,255,0.06);
+    --border-soft:rgba(255,255,255,0.11);
+    --text-0:#f0f1f3;
+    --text-1:#a6aab3;
+    --text-2:#65696f;
+    --signal:#3ddc84;
+    --signal-dim:rgba(61,220,132,0.12);
+    --signal-line:rgba(61,220,132,0.35);
+    --amber:#e8a33d;
+    --amber-dim:rgba(232,163,61,0.12);
+    --amber-line:rgba(232,163,61,0.4);
+    --red:#e8554d;
+    --red-dim:rgba(232,85,77,0.13);
+    --red-line:rgba(232,85,77,0.4);
+    --blue:#4d8ee8;
+    --blue-dim:rgba(77,142,232,0.13);
+    --purple:#a17de8;
+    --purple-dim:rgba(161,125,232,0.13);
+    --radius-lg:18px;
+    --radius-md:13px;
+    --radius-sm:8px;
+    --shadow-card:0 1px 0 rgba(255,255,255,0.04) inset, 0 18px 46px -24px rgba(0,0,0,0.75);
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+
+  body{
+    background:
+      radial-gradient(circle at 15% -10%, rgba(61,220,132,0.06), transparent 40%),
+      radial-gradient(circle at 92% 5%, rgba(232,163,61,0.05), transparent 42%),
+      var(--bg-0);
+    color:var(--text-0);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+
+  .serif{ font-family:'Fraunces', serif; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+  }
+
+  ::selection{ background:rgba(61,220,132,0.25); }
+
+  button{ font-family:inherit; }
+
+  /* ============================================================
+     WIZARD SHELL
+  ============================================================ */
+  #wizardScreen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 20px;
+  }
+
+  .wizard-shell{
+    width:100%;
+    max-width:680px;
+  }
+
+  .wizard-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    justify-content:center;
+    margin-bottom:28px;
+  }
+  .wizard-brand .brand-mark{
+    width:30px;height:30px;
+    border-radius:8px;
+    background:linear-gradient(145deg, var(--signal), var(--blue));
+    flex-shrink:0;
+  }
+  .wizard-brand span{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.8rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--text-1);
+  }
+
+  .wizard-progress-track{
+    height:4px;
+    background:var(--bg-3);
+    border-radius:99px;
+    overflow:hidden;
+    margin-bottom:10px;
+  }
+  .wizard-progress-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--signal), var(--blue));
+    border-radius:99px;
+    width:0%;
+    transition:width .4s cubic-bezier(.16,1,.3,1);
+  }
+  .wizard-progress-label{
+    display:flex;
+    justify-content:space-between;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    color:var(--text-2);
+    margin-bottom:26px;
+  }
+
+  .wizard-card{
+    background:var(--bg-glass);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border:1px solid var(--border-faint);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-card);
+    padding:36px 34px;
+    min-height:300px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .wstep{ display:none; flex-direction:column; gap:18px; flex:1; animation:stepIn .35s ease; }
+  .wstep.active{ display:flex; }
+  @keyframes stepIn{ from{ opacity:0; transform:translateX(10px); } to{ opacity:1; transform:translateX(0); } }
+
+  .wstep .wstep-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--signal);
+  }
+  .wstep h2{
+    font-family:'Fraunces', serif;
+    font-size:1.5rem;
+    font-weight:600;
+    margin:2px 0 4px;
+    letter-spacing:-0.01em;
+  }
+  .wstep .wstep-help{
+    font-size:0.86rem;
+    color:var(--text-2);
+    margin:0 0 6px;
+    line-height:1.5;
+  }
+
+  .wfield{ display:flex; flex-direction:column; gap:7px; }
+  .wfield label{
+    font-size:0.76rem;
+    font-weight:600;
+    color:var(--text-1);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+
+  .winput, .wtextarea, .wselect{
+    background:var(--bg-2);
+    border:1.5px solid var(--border-faint);
+    border-radius:var(--radius-sm);
+    color:var(--text-0);
+    font-family:'Inter', sans-serif;
+    font-size:0.94rem;
+    padding:12px 14px;
+    outline:none;
+    transition:border-color .15s ease, background .15s ease;
+    width:100%;
+  }
+  .winput:focus, .wtextarea:focus, .wselect:focus{
+    border-color:var(--signal-line);
+    background:var(--bg-3);
+  }
+  .wtextarea{ resize:vertical; min-height:90px; line-height:1.5; }
+
+  .wselect{ appearance:none; cursor:pointer; }
+
+  .wfield .field-error{
+    font-size:0.76rem;
+    color:var(--red);
+    display:none;
+  }
+  .wfield.error .winput, .wfield.error .wtextarea, .wfield.error .wselect{
+    border-color:var(--red-line);
+  }
+  .wfield.error .field-error{ display:block; }
+
+  /* checkbox group for validation */
+  .wcheck-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  @media (max-width:520px){ .wcheck-grid{ grid-template-columns:1fr; } }
+
+  .wcheck-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:11px 13px;
+    border:1.5px solid var(--border-faint);
+    border-radius:var(--radius-sm);
+    background:var(--bg-2);
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+    font-size:0.88rem;
+  }
+  .wcheck-item:hover{ border-color:var(--border-soft); }
+  .wcheck-item.checked{ border-color:var(--signal-line); background:var(--signal-dim); color:var(--signal); }
+  .wcheck-item input{ display:none; }
+
+  /* radio-style cards */
+  .wradio-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  @media (max-width:520px){ .wradio-grid{ grid-template-columns:1fr; } }
+  .wradio-item{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+    padding:13px 15px;
+    border:1.5px solid var(--border-faint);
+    border-radius:var(--radius-sm);
+    background:var(--bg-2);
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .wradio-item:hover{ border-color:var(--border-soft); }
+  .wradio-item.checked{ border-color:var(--signal-line); background:var(--signal-dim); }
+  .wradio-item.checked .wradio-title{ color:var(--signal); }
+  .wradio-item input{ display:none; }
+  .wradio-title{ font-weight:600; font-size:0.9rem; }
+  .wradio-sub{ font-size:0.74rem; color:var(--text-2); }
+
+  .wizard-nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:28px;
+    padding-top:22px;
+    border-top:1px solid var(--border-faint);
+  }
+
+  .wbtn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:11px 22px;
+    border-radius:999px;
+    border:1.5px solid var(--border-soft);
+    background:var(--bg-2);
+    color:var(--text-0);
+    font-size:0.88rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:all .18s ease;
+  }
+  .wbtn:hover{ background:var(--bg-3); border-color:var(--text-2); }
+  .wbtn:disabled{ opacity:0.35; cursor:not-allowed; }
+  .wbtn-primary{
+    background:linear-gradient(135deg, var(--signal), #2bb86c);
+    border-color:transparent;
+    color:#04140a;
+  }
+  .wbtn-primary:hover{ filter:brightness(1.08); }
+
+  .wizard-autosave-note{
+    text-align:center;
+    font-size:0.74rem;
+    color:var(--text-2);
+    margin-top:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+  }
+  .wizard-autosave-note .save-dot{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--signal);
+    box-shadow:0 0 0 0 rgba(61,220,132,0.6);
+    animation:saveDotPulse 2.4s infinite;
+  }
+  @keyframes saveDotPulse{
+    0%{ box-shadow:0 0 0 0 rgba(61,220,132,0.5); }
+    70%{ box-shadow:0 0 0 6px rgba(61,220,132,0); }
+    100%{ box-shadow:0 0 0 0 rgba(61,220,132,0); }
+  }
+
+  /* Step 5 + 14 validation sub-checks reuse wcheck-grid */
+</style>
+
+<style>
+  /* ============================================================
+     REPORT DASHBOARD STYLES
+  ============================================================ */
+  #reportScreen{ display:none; }
+  #reportScreen.active{ display:block; }
+
+  .report-shell{
+    max-width:1300px;
+    margin:0 auto;
+    padding:0 24px 90px;
+  }
+
+  .report-header{
+    padding:48px 0 36px;
+    border-bottom:1px solid var(--border-faint);
+    margin-bottom:40px;
+  }
+
+  .report-header-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-bottom:26px;
+  }
+
+  .report-eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--signal);
+    background:var(--signal-dim);
+    border:1px solid var(--signal-line);
+    border-radius:999px;
+    padding:6px 14px;
+    margin-bottom:18px;
+  }
+  .report-eyebrow .pulse-dot{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--signal);
+    animation:saveDotPulse 2s infinite;
+  }
+
+  .report-header h1{
+    font-family:'Fraunces', serif;
+    font-size:clamp(1.8rem, 3.4vw, 2.7rem);
+    font-weight:600;
+    letter-spacing:-0.02em;
+    margin:0 0 8px;
+  }
+  .report-header .report-sub{
+    font-size:1rem;
+    color:var(--text-1);
+    margin:0;
+  }
+
+  .report-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .rbtn{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:9px 16px;
+    border-radius:999px;
+    border:1.5px solid var(--border-soft);
+    background:var(--bg-2);
+    color:var(--text-1);
+    font-size:0.8rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:all .18s ease;
+  }
+  .rbtn:hover{ background:var(--bg-3); color:var(--text-0); border-color:var(--text-2); }
+
+  .meta-strip{
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:14px;
+  }
+  @media (max-width:900px){ .meta-strip{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:540px){ .meta-strip{ grid-template-columns:1fr 1fr; } }
+
+  .meta-chip{
+    padding:13px 16px;
+    border-radius:var(--radius-md);
+    background:var(--bg-2);
+    border:1px solid var(--border-faint);
+  }
+  .meta-chip .mc-label{
+    font-size:0.68rem;
+    text-transform:uppercase;
+    letter-spacing:0.07em;
+    color:var(--text-2);
+    font-weight:700;
+    margin-bottom:4px;
+  }
+  .meta-chip .mc-value{
+    font-size:0.92rem;
+    font-weight:700;
+    color:var(--text-0);
+  }
+
+  /* ============ section shell ============ */
+  .rsection{ margin-bottom:54px; }
+  .rsection-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+  .rsection-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    color:var(--text-2);
+    border:1px solid var(--border-soft);
+    border-radius:6px;
+    padding:3px 8px;
+  }
+  .rsection-title{
+    font-family:'Fraunces', serif;
+    font-size:1.35rem;
+    font-weight:600;
+    color:var(--text-0);
+  }
+  .rsection-sub{
+    font-size:0.85rem;
+    color:var(--text-2);
+    margin-top:3px;
+    max-width:680px;
+    line-height:1.55;
+  }
+
+  .glass{
+    background:var(--bg-glass);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border:1px solid var(--border-faint);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-card);
+  }
+
+  /* tag/badge system shared throughout report */
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:0.72rem;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .badge-low{ background:rgba(61,220,132,0.13); color:var(--signal); }
+  .badge-medium{ background:var(--amber-dim); color:var(--amber); }
+  .badge-high{ background:var(--red-dim); color:var(--red); }
+  .badge-go{ background:rgba(61,220,132,0.15); color:var(--signal); }
+  .badge-caution{ background:var(--amber-dim); color:var(--amber); }
+  .badge-pivot{ background:var(--purple-dim); color:var(--purple); }
+  .badge-nogo{ background:var(--red-dim); color:var(--red); }
+  .tag-est{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.62rem;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--text-2);
+    border:1px dashed var(--border-soft);
+    border-radius:5px;
+    padding:2px 6px;
+  }
+
+  /* ============ Section 1 — Executive Summary cards ============ */
+  .exec-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:16px;
+  }
+  @media (max-width:980px){ .exec-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:560px){ .exec-grid{ grid-template-columns:1fr; } }
+
+  .exec-card{
+    padding:22px;
+    transition:transform .2s ease, border-color .2s ease;
+  }
+  .exec-card:hover{ transform:translateY(-3px); border-color:var(--border-soft); }
+  .exec-card .ec-icon{
+    width:36px;height:36px;
+    border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1rem;
+    margin-bottom:14px;
+  }
+  .exec-card h4{ font-size:0.92rem; font-weight:700; margin:0 0 8px; }
+  .exec-card p{ font-size:0.83rem; color:var(--text-1); line-height:1.55; margin:0; }
+
+  .findings-list{ margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+  .finding-item{
+    display:flex; gap:10px; align-items:flex-start;
+    font-size:0.86rem; color:var(--text-1); line-height:1.55;
+  }
+  .finding-item .fi-dot{ color:var(--signal); flex-shrink:0; margin-top:2px; }
+
+  /* ============ Section 2 — Founder Market Fit ============ */
+  .fmf-wrap{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:30px;
+    padding:30px;
+    align-items:center;
+  }
+  @media (max-width:840px){ .fmf-wrap{ grid-template-columns:1fr; } }
+
+  .gauge-block{ display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .gauge-wrap{ position:relative; width:200px; height:200px; }
+  .gauge-wrap svg{ width:100%; height:100%; transform:rotate(-90deg); }
+  .gauge-track{ fill:none; stroke:rgba(255,255,255,0.06); stroke-width:12; }
+  .gauge-fill{ fill:none; stroke-width:12; stroke-linecap:round; transition:stroke-dashoffset 1.5s cubic-bezier(.16,1,.3,1); }
+  .gauge-center{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .gauge-num{ font-family:'JetBrains Mono', monospace; font-size:2.7rem; font-weight:700; line-height:1; }
+  .gauge-suffix{ font-size:0.85rem; color:var(--text-2); }
+  .confidence-pill{
+    font-size:0.78rem; font-weight:700; padding:5px 13px; border-radius:999px;
+  }
+
+  .fmf-breakdown{ display:flex; flex-direction:column; gap:14px; }
+  .fmf-bar-row{ display:flex; flex-direction:column; gap:6px; }
+  .fmf-bar-label{ display:flex; justify-content:space-between; font-size:0.84rem; color:var(--text-1); }
+  .fmf-bar-label strong{ color:var(--text-0); }
+  .fmf-bar-track{ height:8px; border-radius:99px; background:var(--bg-3); overflow:hidden; }
+  .fmf-bar-fill{ height:100%; border-radius:99px; width:0; transition:width 1.2s cubic-bezier(.16,1,.3,1); background:linear-gradient(90deg, var(--signal), var(--blue)); }
+
+  .fmf-explain{
+    margin-top:6px;
+    font-size:0.86rem;
+    color:var(--text-1);
+    line-height:1.6;
+    padding:16px 18px;
+    background:var(--bg-2);
+    border-radius:var(--radius-md);
+    border-left:3px solid var(--signal);
+  }
+
+  /* ============ Section 3 — Market Size (TAM/SAM/SOM) ============ */
+  .market-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:16px;
+  }
+  @media (max-width:880px){ .market-grid{ grid-template-columns:1fr; } }
+
+  .market-card{ padding:24px; text-align:center; position:relative; }
+  .market-card .mk-label{ font-size:0.76rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-2); font-weight:700; margin-bottom:10px; }
+  .market-card .mk-value{ font-family:'JetBrains Mono', monospace; font-size:1.9rem; font-weight:700; color:var(--text-0); margin-bottom:8px; }
+  .market-card .mk-desc{ font-size:0.8rem; color:var(--text-1); line-height:1.5; }
+
+  .pyramid-wrap{ display:flex; justify-content:center; margin:30px 0 10px; }
+
+  /* ============ Section 4 — Competitor table ============ */
+  .table-wrap{ border-radius:var(--radius-lg); overflow:hidden; }
+  .table-scroll{ overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; }
+  table.rtable{ min-width:760px; }
+  thead tr{ background:rgba(255,255,255,0.025); }
+  th{
+    text-align:left; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em;
+    color:var(--text-2); font-weight:700; padding:13px 16px; border-bottom:1px solid var(--border-faint);
+  }
+  td{ padding:13px 16px; font-size:0.85rem; color:var(--text-1); border-bottom:1px solid var(--border-faint); vertical-align:top; }
+  tbody tr:hover{ background:rgba(255,255,255,0.02); }
+  tbody tr:last-child td{ border-bottom:none; }
+  td.strong-cell{ color:var(--text-0); font-weight:600; }
+
+  /* ============ Section 4b — competitive landscape chart ============ */
+  .landscape-svg-box{ display:flex; justify-content:center; padding:20px 0; }
+
+  /* ============ Generic two/three col grids reused widely ============ */
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .grid-3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+  .grid-4{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  @media (max-width:900px){ .grid-3, .grid-4{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:600px){ .grid-2, .grid-3, .grid-4{ grid-template-columns:1fr; } }
+
+  .info-card{ padding:20px; }
+  .info-card h4{ font-size:0.88rem; font-weight:700; margin:0 0 10px; display:flex; align-items:center; gap:8px; }
+  .info-card ul{ margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .info-card ul li{ font-size:0.84rem; color:var(--text-1); line-height:1.5; padding-left:16px; position:relative; }
+  .info-card ul li::before{ content:"—"; position:absolute; left:0; color:var(--text-2); }
+
+  /* ============ Section 6 — ICP profile card ============ */
+  .icp-card{ padding:0; overflow:hidden; }
+  .icp-head{
+    padding:24px 26px; border-bottom:1px solid var(--border-faint);
+    display:flex; align-items:center; gap:14px;
+    background:linear-gradient(120deg, rgba(61,220,132,0.06), rgba(77,142,232,0.05));
+  }
+  .icp-avatar{ width:46px;height:46px;border-radius:12px; background:linear-gradient(145deg, var(--blue), var(--purple)); display:flex;align-items:center;justify-content:center; font-size:1.3rem; flex-shrink:0; }
+  .icp-head h4{ margin:0 0 2px; font-size:1.05rem; }
+  .icp-head span{ font-size:0.78rem; color:var(--text-2); }
+  .icp-body{ display:grid; grid-template-columns:1fr 1fr; gap:0; }
+  @media (max-width:700px){ .icp-body{ grid-template-columns:1fr; } }
+  .icp-field{ padding:18px 26px; border-bottom:1px solid var(--border-faint); border-right:1px solid var(--border-faint); }
+  .icp-field:nth-child(2n){ border-right:none; }
+  @media (max-width:700px){ .icp-field{ border-right:none !important; } }
+  .icp-field .icp-flabel{ font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-2); font-weight:700; margin-bottom:5px; }
+  .icp-field .icp-fvalue{ font-size:0.9rem; color:var(--text-0); font-weight:600; line-height:1.5; }
+
+  /* ============ Section 7 — Buyer Persona ============ */
+  .persona-card{ display:flex; gap:24px; padding:28px; }
+  @media (max-width:700px){ .persona-card{ flex-direction:column; } }
+  .persona-avatar{
+    width:78px;height:78px; border-radius:18px; flex-shrink:0;
+    background:linear-gradient(145deg, var(--amber), var(--red));
+    display:flex; align-items:center; justify-content:center; font-size:2rem;
+  }
+  .persona-info h4{ font-size:1.15rem; margin:0 0 2px; font-family:'Fraunces',serif; }
+  .persona-info .persona-role{ font-size:0.85rem; color:var(--signal); font-weight:600; margin-bottom:16px; }
+  .persona-detail-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:560px){ .persona-detail-grid{ grid-template-columns:1fr; } }
+  .pd-block .pd-label{ font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-2); font-weight:700; margin-bottom:4px; }
+  .pd-block .pd-value{ font-size:0.84rem; color:var(--text-1); line-height:1.55; }
+
+  /* ============ Section 8 — Pain point matrix ============ */
+  .pain-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+  @media (max-width:880px){ .pain-grid{ grid-template-columns:1fr; } }
+  .pain-col{ padding:18px; border-radius:var(--radius-md); }
+  .pain-col.high{ background:rgba(232,85,77,0.06); border:1px solid var(--red-line); }
+  .pain-col.medium{ background:rgba(232,163,61,0.06); border:1px solid var(--amber-line); }
+  .pain-col.low{ background:rgba(61,220,132,0.06); border:1px solid var(--signal-line); }
+  .pain-col-head{ display:flex; align-items:center; gap:8px; font-weight:700; font-size:0.86rem; margin-bottom:12px; }
+  .pain-item{ font-size:0.83rem; color:var(--text-1); padding:9px 0; border-top:1px solid var(--border-faint); line-height:1.5; }
+  .pain-item:first-of-type{ border-top:none; }
+
+  /* ============ Section 9/10 triggers + objections ============ */
+  .obj-item{
+    display:flex; gap:12px; padding:14px 16px; border-radius:var(--radius-md);
+    background:var(--bg-2); border:1px solid var(--border-faint); margin-bottom:10px;
+  }
+  .obj-item .obj-icon{ font-size:1.1rem; flex-shrink:0; }
+  .obj-item .obj-title{ font-size:0.87rem; font-weight:700; color:var(--text-0); margin-bottom:3px; }
+  .obj-item .obj-mitigation{ font-size:0.82rem; color:var(--text-2); line-height:1.5; }
+  .obj-item .obj-mitigation strong{ color:var(--signal); font-weight:600; }
+
+  /* ============ Section 11 — Customer Journey timeline ============ */
+  .journey-track{
+    display:flex;
+    overflow-x:auto;
+    gap:0;
+    padding:10px 0 20px;
+  }
+  .journey-stage{
+    flex:1 0 160px;
+    min-width:160px;
+    position:relative;
+    padding:0 10px 0 0;
+    cursor:pointer;
+  }
+  .journey-stage:last-child{ flex:1 0 160px; }
+  .journey-dot-row{ display:flex; align-items:center; margin-bottom:14px; }
+  .journey-dot{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--bg-3); border:2px solid var(--border-soft);
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.78rem; font-weight:700; color:var(--text-2);
+    flex-shrink:0; transition:all .2s ease; z-index:1;
+  }
+  .journey-stage.active .journey-dot{ background:var(--signal); border-color:var(--signal); color:#04140a; }
+  .journey-line{ height:2px; flex:1; background:var(--border-soft); }
+  .journey-stage.active .journey-line{ background:var(--signal); }
+  .journey-stage:last-child .journey-line{ display:none; }
+  .journey-label{ font-size:0.78rem; font-weight:700; color:var(--text-1); margin-bottom:6px; }
+  .journey-stage.active .journey-label{ color:var(--signal); }
+  .journey-desc{ font-size:0.78rem; color:var(--text-2); line-height:1.5; display:none; }
+  .journey-stage.active .journey-desc{ display:block; }
+
+  /* ============ Section 12 — SWOT ============ */
+  .swot-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:640px){ .swot-grid{ grid-template-columns:1fr; } }
+  .swot-quad{ padding:20px; border-radius:var(--radius-md); }
+  .swot-quad.s{ background:rgba(61,220,132,0.06); border:1px solid var(--signal-line); }
+  .swot-quad.w{ background:rgba(232,85,77,0.06); border:1px solid var(--red-line); }
+  .swot-quad.o{ background:rgba(77,142,232,0.07); border:1px solid rgba(77,142,232,0.4); }
+  .swot-quad.t{ background:rgba(232,163,61,0.06); border:1px solid var(--amber-line); }
+  .swot-quad-title{ font-weight:700; font-size:0.86rem; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .swot-quad ul{ margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px; }
+  .swot-quad ul li{ font-size:0.82rem; color:var(--text-1); line-height:1.5; padding-left:14px; position:relative; }
+  .swot-quad ul li::before{ content:"·"; position:absolute; left:0; font-weight:900; }
+
+  /* ============ Section 13 — Risk matrix ============ */
+  .risk-row{
+    display:grid; grid-template-columns:160px 1fr 90px 90px; gap:14px; align-items:center;
+    padding:14px 18px; border-radius:var(--radius-md);
+  }
+  @media (max-width:680px){ .risk-row{ grid-template-columns:1fr; gap:8px; } }
+  .risk-name{ font-weight:700; font-size:0.86rem; }
+  .risk-bar-track{ height:7px; border-radius:99px; background:var(--bg-3); overflow:hidden; }
+  .risk-bar-fill{ height:100%; border-radius:99px; width:0; transition:width 1.1s cubic-bezier(.16,1,.3,1); }
+
+  /* ============ Section 14 — Pivot opportunities ============ */
+  .pivot-card{ padding:18px; }
+  .pivot-card .pv-icon{ font-size:1.3rem; margin-bottom:10px; }
+  .pivot-card h4{ font-size:0.88rem; margin:0 0 8px; }
+  .pivot-card p{ font-size:0.82rem; color:var(--text-1); line-height:1.55; margin:0; }
+
+  /* ============ Section 15 — Go/No-Go ============ */
+  .verdict-wrap{ padding:36px; text-align:center; }
+  .verdict-badge-large{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:'Fraunces', serif;
+    font-size:1.6rem; font-weight:700;
+    padding:14px 32px;
+    border-radius:999px;
+    margin-bottom:22px;
+  }
+  .confidence-meter-wrap{ max-width:380px; margin:0 auto 26px; }
+  .confidence-meter-label{ display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-2); margin-bottom:8px; }
+  .confidence-meter-track{ height:10px; border-radius:99px; background:var(--bg-3); overflow:hidden; }
+  .confidence-meter-fill{ height:100%; border-radius:99px; width:0; transition:width 1.3s cubic-bezier(.16,1,.3,1); background:linear-gradient(90deg, var(--blue), var(--signal)); }
+  .verdict-reasoning{ max-width:600px; margin:0 auto; text-align:left; }
+  .verdict-reasoning h5{ font-size:0.86rem; margin:0 0 10px; color:var(--text-0); }
+  .verdict-reasoning ul{ margin:0 0 18px; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .verdict-reasoning ul li{ font-size:0.84rem; color:var(--text-1); line-height:1.55; padding-left:18px; position:relative; }
+  .verdict-reasoning ul li::before{ content:"→"; position:absolute; left:0; color:var(--signal); }
+
+  /* ============ Section 16 — 30-day plan ============ */
+  .week-block{ margin-bottom:18px; }
+  .week-head{
+    display:flex; align-items:center; gap:10px; margin-bottom:12px;
+    font-family:'Fraunces',serif; font-size:1.02rem; font-weight:600;
+  }
+  .week-head .week-chip{
+    font-family:'JetBrains Mono', monospace; font-size:0.7rem;
+    background:var(--bg-3); border-radius:6px; padding:3px 9px; color:var(--text-1);
+  }
+  .task-row{
+    display:grid; grid-template-columns:1fr 1fr 90px; gap:14px; align-items:center;
+    padding:12px 16px; border-radius:var(--radius-sm);
+    background:var(--bg-2); border:1px solid var(--border-faint);
+    margin-bottom:8px;
+  }
+  @media (max-width:680px){ .task-row{ grid-template-columns:1fr; gap:6px; } }
+  .task-name{ font-size:0.85rem; color:var(--text-0); font-weight:600; }
+  .task-outcome{ font-size:0.8rem; color:var(--text-2); }
+
+  /* ============ Section 17 — VC Radar ============ */
+  .radar-wrap{ display:grid; grid-template-columns:1.2fr 1fr; gap:24px; align-items:center; padding:30px; }
+  @media (max-width:840px){ .radar-wrap{ grid-template-columns:1fr; } }
+  .radar-svg-box{ display:flex; justify-content:center; position:relative; }
+  .radar-legend-list{ display:flex; flex-direction:column; gap:10px; }
+  .radar-legend-item{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; border-radius:var(--radius-sm); background:var(--bg-2); border:1px solid var(--border-faint); }
+  .radar-legend-item .rli-left{ display:flex; align-items:center; gap:9px; font-size:0.84rem; color:var(--text-1); }
+  .radar-legend-item .rli-dot{ width:9px;height:9px;border-radius:50%; flex-shrink:0; }
+  .radar-legend-item .rli-val{ font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--text-0); }
+  .ir-score-banner{ text-align:center; margin-bottom:20px; }
+  .ir-score-banner .irs-num{ font-family:'JetBrains Mono', monospace; font-size:2.6rem; font-weight:800; }
+  .ir-score-banner .irs-label{ font-size:0.78rem; color:var(--text-2); text-transform:uppercase; letter-spacing:0.07em; }
+
+  .svg-tooltip{
+    position:absolute; pointer-events:none;
+    background:rgba(10,11,13,0.96); border:1px solid var(--border-soft); border-radius:8px;
+    padding:8px 12px; font-size:0.76rem; color:var(--text-0);
+    opacity:0; transition:opacity .12s ease; z-index:10; white-space:nowrap;
+    transform:translate(-50%,-110%);
+  }
+  .svg-tooltip.show{ opacity:1; }
+
+  /* ============ Section 18 — Success probability ============ */
+  .success-wrap{ display:grid; grid-template-columns:240px 1fr; gap:30px; padding:30px; align-items:center; }
+  @media (max-width:780px){ .success-wrap{ grid-template-columns:1fr; } }
+  .factor-list{ display:flex; flex-direction:column; gap:10px; }
+  .factor-item{ display:flex; align-items:center; gap:10px; font-size:0.85rem; padding:11px 14px; border-radius:var(--radius-sm); background:var(--bg-2); border:1px solid var(--border-faint); }
+  .factor-item.risk{ border-left:3px solid var(--red); }
+  .factor-item.growth{ border-left:3px solid var(--signal); }
+
+  /* ============ Section 19 — Investor summary ============ */
+  .investor-doc{ padding:32px; }
+  .investor-row{ display:grid; grid-template-columns:160px 1fr; gap:20px; padding:16px 0; border-bottom:1px solid var(--border-faint); }
+  @media (max-width:600px){ .investor-row{ grid-template-columns:1fr; gap:6px; } }
+  .investor-row:last-child{ border-bottom:none; }
+  .investor-row .ir-label{ font-size:0.76rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-2); font-weight:700; }
+  .investor-row .ir-value{ font-size:0.88rem; color:var(--text-1); line-height:1.6; }
+
+  /* ============ Section 20 — Export ============ */
+  .export-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  @media (max-width:780px){ .export-grid{ grid-template-columns:1fr 1fr; } }
+  .export-btn{
+    padding:20px; border-radius:var(--radius-md); background:var(--bg-2); border:1px solid var(--border-faint);
+    display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center;
+    cursor:pointer; transition:all .18s ease; color:var(--text-0);
+  }
+  .export-btn:hover{ background:var(--bg-3); border-color:var(--signal-line); transform:translateY(-2px); }
+  .export-btn .eb-icon{ font-size:1.4rem; }
+  .export-btn .eb-label{ font-size:0.84rem; font-weight:600; }
+  .export-btn.danger:hover{ border-color:var(--red-line); }
+
+  .report-footer{
+    text-align:center; padding:40px 0 10px; font-size:0.76rem; color:var(--text-2);
+  }
+
+  .reveal{ opacity:0; transform:translateY(16px); transition:opacity .55s ease, transform .55s ease; }
+  .reveal.visible{ opacity:1; transform:translateY(0); }
+
+  @media print{
+    #wizardScreen, .report-actions, .export-grid-section{ display:none !important; }
+    body{ background:#fff; color:#000; }
+    .glass{ background:#fff; border:1px solid #ccc; box-shadow:none; }
+  }
+</style>
+
+<div id="wizardScreen">
+  <div class="wizard-shell">
+    <div class="wizard-brand">
+      <div class="brand-mark"></div>
+      <span>Validation Engine</span>
+    </div>
+
+    <div class="wizard-progress-track">
+      <div class="wizard-progress-fill" id="progressFill"></div>
+    </div>
+    <div class="wizard-progress-label">
+      <span id="progressText">Step 1 of 14</span>
+      <span id="progressPct">7%</span>
+    </div>
+
+    <div class="wizard-card">
+
+      <!-- STEP 1 — Startup Idea -->
+      <div class="wstep active" data-step="1">
+        <span class="wstep-eyebrow">Step 1 — The Idea</span>
+        <h2>What are you building?</h2>
+        <p class="wstep-help">Describe your startup idea in a sentence or two. Be specific about what it does.</p>
+        <div class="wfield" data-field="idea">
+          <label>Startup Idea</label>
+          <textarea class="wtextarea" placeholder="e.g. A marketplace that connects independent farmers directly with restaurants for next-day produce delivery" maxlength="400"></textarea>
+          <span class="field-error">Please describe your idea (at least 10 characters).</span>
+        </div>
+        <div class="wfield" data-field="name">
+          <label>Give it a working name</label>
+          <input class="winput" type="text" placeholder="e.g. FarmLink" maxlength="60">
+          <span class="field-error">Please enter a name for your startup.</span>
+        </div>
+      </div>
+
+      <!-- STEP 2 — Problem -->
+      <div class="wstep" data-step="2">
+        <span class="wstep-eyebrow">Step 2 — The Problem</span>
+        <h2>What problem does this solve?</h2>
+        <p class="wstep-help">What pain, friction, or unmet need are you addressing?</p>
+        <div class="wfield" data-field="problem">
+          <label>Problem Being Solved</label>
+          <textarea class="wtextarea" placeholder="e.g. Restaurants overpay for produce through 3-4 middlemen, and farmers receive a fraction of retail price" maxlength="400"></textarea>
+          <span class="field-error">Please describe the problem (at least 10 characters).</span>
+        </div>
+      </div>
+
+      <!-- STEP 3 — Target customers -->
+      <div class="wstep" data-step="3">
+        <span class="wstep-eyebrow">Step 3 — The Customer</span>
+        <h2>Who are you building this for?</h2>
+        <p class="wstep-help">Describe your target customers as specifically as you can.</p>
+        <div class="wfield" data-field="customers">
+          <label>Target Customers</label>
+          <textarea class="wtextarea" placeholder="e.g. Independent restaurant owners in mid-sized cities who currently order produce through regional distributors" maxlength="400"></textarea>
+          <span class="field-error">Please describe your target customers.</span>
+        </div>
+      </div>
+
+      <!-- STEP 4 — Why -->
+      <div class="wstep" data-step="4">
+        <span class="wstep-eyebrow">Step 4 — Founder Motivation</span>
+        <h2>Why do you want to build this?</h2>
+        <p class="wstep-help">Your personal connection to this problem matters — be honest.</p>
+        <div class="wfield" data-field="why">
+          <label>Why I Want to Build It</label>
+          <textarea class="wtextarea" placeholder="e.g. I grew up on a farm and watched my family struggle to get fair prices for produce" maxlength="400"></textarea>
+          <span class="field-error">Please share your motivation.</span>
+        </div>
+      </div>
+
+      <!-- STEP 5 — Existing validation -->
+      <div class="wstep" data-step="5">
+        <span class="wstep-eyebrow">Step 5 — Existing Validation</span>
+        <h2>What proof do you already have?</h2>
+        <p class="wstep-help">Select everything that currently applies. It's fine if none do yet.</p>
+        <div class="wfield" data-field="validation">
+          <label>Existing Validation (select all that apply)</label>
+          <div class="wcheck-grid">
+            <label class="wcheck-item" data-val="users"><input type="checkbox">Active Users</label>
+            <label class="wcheck-item" data-val="feedback"><input type="checkbox">Customer Feedback</label>
+            <label class="wcheck-item" data-val="waitlist"><input type="checkbox">Waitlist Signups</label>
+            <label class="wcheck-item" data-val="revenue"><input type="checkbox">Revenue</label>
+            <label class="wcheck-item" data-val="partnerships"><input type="checkbox">Partnerships</label>
+            <label class="wcheck-item" data-val="none"><input type="checkbox">None Yet</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6 — Target market / country -->
+      <div class="wstep" data-step="6">
+        <span class="wstep-eyebrow">Step 6 — Market</span>
+        <h2>Where will you launch first?</h2>
+        <p class="wstep-help">Your primary target market or country.</p>
+        <div class="wfield" data-field="market">
+          <label>Target Market / Country</label>
+          <input class="winput" type="text" placeholder="e.g. United States, India, Southeast Asia">
+          <span class="field-error">Please enter a target market.</span>
+        </div>
+      </div>
+
+      <!-- STEP 7 — Type -->
+      <div class="wstep" data-step="7">
+        <span class="wstep-eyebrow">Step 7 — Classification</span>
+        <h2>How do you see this?</h2>
+        <div class="wfield" data-field="type">
+          <label>Startup, Business, or Side Project?</label>
+          <div class="wradio-grid">
+            <label class="wradio-item" data-val="Startup"><input type="radio" name="type"><span class="wradio-title">Startup</span><span class="wradio-sub">High-growth, scalable, likely to seek funding</span></label>
+            <label class="wradio-item" data-val="Business"><input type="radio" name="type"><span class="wradio-title">Business</span><span class="wradio-sub">Sustainable, profit-focused, may stay independent</span></label>
+            <label class="wradio-item" data-val="Side Project"><input type="radio" name="type"><span class="wradio-title">Side Project</span><span class="wradio-sub">Exploratory, low commitment for now</span></label>
+          </div>
+          <span class="field-error">Please choose one option.</span>
+        </div>
+      </div>
+
+      <!-- STEP 8 — Stage -->
+      <div class="wstep" data-step="8">
+        <span class="wstep-eyebrow">Step 8 — Stage</span>
+        <h2>How far along are you?</h2>
+        <div class="wfield" data-field="stage">
+          <label>Development Stage</label>
+          <div class="wradio-grid">
+            <label class="wradio-item" data-val="Idea"><input type="radio" name="stage"><span class="wradio-title">Idea</span><span class="wradio-sub">Concept stage, nothing built yet</span></label>
+            <label class="wradio-item" data-val="MVP"><input type="radio" name="stage"><span class="wradio-title">MVP</span><span class="wradio-sub">A basic working version exists</span></label>
+            <label class="wradio-item" data-val="Beta"><input type="radio" name="stage"><span class="wradio-title">Beta</span><span class="wradio-sub">Testing with real users</span></label>
+            <label class="wradio-item" data-val="Revenue"><input type="radio" name="stage"><span class="wradio-title">Revenue</span><span class="wradio-sub">Generating paying customers</span></label>
+            <label class="wradio-item" data-val="Growth"><input type="radio" name="stage"><span class="wradio-title">Growth</span><span class="wradio-sub">Scaling an established base</span></label>
+          </div>
+          <span class="field-error">Please choose your current stage.</span>
+        </div>
+      </div>
+
+      <!-- STEP 9 — Industry -->
+      <div class="wstep" data-step="9">
+        <span class="wstep-eyebrow">Step 9 — Industry</span>
+        <h2>What industry are you in?</h2>
+        <div class="wfield" data-field="industry">
+          <label>Industry</label>
+          <select class="wselect">
+            <option value="">Select an industry…</option>
+            <option>SaaS / Software</option>
+            <option>Fintech</option>
+            <option>Healthtech</option>
+            <option>E-commerce / Retail</option>
+            <option>Marketplace</option>
+            <option>EdTech</option>
+            <option>AgriTech / Food</option>
+            <option>Logistics / Supply Chain</option>
+            <option>Consumer Mobile App</option>
+            <option>AI / Deep Tech</option>
+            <option>Climate / CleanTech</option>
+            <option>Other</option>
+          </select>
+          <span class="field-error">Please select an industry.</span>
+        </div>
+      </div>
+
+      <!-- STEP 10 — Business model -->
+      <div class="wstep" data-step="10">
+        <span class="wstep-eyebrow">Step 10 — Business Model</span>
+        <h2>How will the business work?</h2>
+        <div class="wfield" data-field="bizmodel">
+          <label>Business Model</label>
+          <select class="wselect">
+            <option value="">Select a business model…</option>
+            <option>B2B SaaS</option>
+            <option>B2C Subscription</option>
+            <option>Marketplace (Commission)</option>
+            <option>E-commerce (Direct Sales)</option>
+            <option>Freemium</option>
+            <option>Advertising</option>
+            <option>Transaction Fees</option>
+            <option>Licensing</option>
+            <option>Other</option>
+          </select>
+          <span class="field-error">Please select a business model.</span>
+        </div>
+        <div class="wfield" data-field="pricing">
+          <label>Pricing Model</label>
+          <select class="wselect">
+            <option value="">Select a pricing model…</option>
+            <option>Flat Monthly Subscription</option>
+            <option>Tiered Subscription</option>
+            <option>Usage-Based / Metered</option>
+            <option>One-Time Purchase</option>
+            <option>Commission per Transaction</option>
+            <option>Freemium with Paid Upgrade</option>
+            <option>Not Decided Yet</option>
+          </select>
+          <span class="field-error">Please select a pricing model.</span>
+        </div>
+      </div>
+
+      <!-- STEP 11 — Competitors -->
+      <div class="wstep" data-step="11">
+        <span class="wstep-eyebrow">Step 11 — Competition</span>
+        <h2>Who else is solving this?</h2>
+        <p class="wstep-help">List known competitors or alternatives, separated by commas. If none, say so — that's useful too.</p>
+        <div class="wfield" data-field="competitors">
+          <label>Competitors</label>
+          <textarea class="wtextarea" placeholder="e.g. Local distributors, FreshDirect, regional co-ops, or 'none identified yet'" maxlength="300"></textarea>
+          <span class="field-error">Please list competitors or state none exist.</span>
+        </div>
+      </div>
+
+      <!-- STEP 12 — Team size -->
+      <div class="wstep" data-step="12">
+        <span class="wstep-eyebrow">Step 12 — Team</span>
+        <h2>Who's building this with you?</h2>
+        <div class="wfield" data-field="teamsize">
+          <label>Team Size</label>
+          <div class="wradio-grid">
+            <label class="wradio-item" data-val="Solo Founder"><input type="radio" name="team"><span class="wradio-title">Solo Founder</span></label>
+            <label class="wradio-item" data-val="2-3 Co-founders"><input type="radio" name="team"><span class="wradio-title">2–3 Co-founders</span></label>
+            <label class="wradio-item" data-val="4-10 People"><input type="radio" name="team"><span class="wradio-title">4–10 People</span></label>
+            <label class="wradio-item" data-val="10+ People"><input type="radio" name="team"><span class="wradio-title">10+ People</span></label>
+          </div>
+          <span class="field-error">Please select a team size.</span>
+        </div>
+      </div>
+
+      <!-- STEP 13 — Funding -->
+      <div class="wstep" data-step="13">
+        <span class="wstep-eyebrow">Step 13 — Funding</span>
+        <h2>What's your funding status?</h2>
+        <div class="wfield" data-field="funding">
+          <label>Funding Status</label>
+          <div class="wradio-grid">
+            <label class="wradio-item" data-val="Bootstrapped"><input type="radio" name="funding"><span class="wradio-title">Bootstrapped</span></label>
+            <label class="wradio-item" data-val="Pre-seed / Friends & Family"><input type="radio" name="funding"><span class="wradio-title">Pre-seed</span><span class="wradio-sub">Friends & family</span></label>
+            <label class="wradio-item" data-val="Seed Stage"><input type="radio" name="funding"><span class="wradio-title">Seed Stage</span></label>
+            <label class="wradio-item" data-val="Series A+"><input type="radio" name="funding"><span class="wradio-title">Series A+</span></label>
+          </div>
+          <span class="field-error">Please select your funding status.</span>
+        </div>
+      </div>
+
+      <!-- STEP 14 — Review -->
+      <div class="wstep" data-step="14">
+        <span class="wstep-eyebrow">Step 14 — Final Review</span>
+        <h2>Ready to generate your report</h2>
+        <p class="wstep-help">Review your answers below. You can go back to change anything.</p>
+        <div id="reviewSummary" style="display:flex;flex-direction:column;gap:8px;font-size:0.84rem;color:var(--text-1);max-height:280px;overflow-y:auto;padding-right:6px;"></div>
+      </div>
+
+      <div class="wizard-nav">
+        <button class="wbtn" id="prevBtn" type="button">← Back</button>
+        <button class="wbtn wbtn-primary" id="nextBtn" type="button">Next →</button>
+      </div>
+    </div>
+
+    <div class="wizard-autosave-note"><span class="save-dot"></span><span id="autosaveText">Progress saved automatically</span></div>
+  </div>
+</div>
+
+<div id="reportScreen">
+  <div class="report-shell">
+
+    <header class="report-header">
+      <div class="report-header-top">
+        <div>
+          <div class="report-eyebrow"><span class="pulse-dot"></span>VALIDATION INTELLIGENCE REPORT</div>
+          <h1>Startup Validation<br>Intelligence Report</h1>
+          <p class="report-sub">Founder, Market, and Opportunity Assessment</p>
+        </div>
+        <div class="report-actions">
+          <button class="rbtn" id="btnEditAnswers">✎ Edit Answers</button>
+          <button class="rbtn" id="btnPrint">🖨 Print</button>
+          <button class="rbtn" id="btnDownload">⬇ Download HTML</button>
+          <button class="rbtn" id="btnReset">↺ Reset</button>
+        </div>
+      </div>
+
+      <div class="meta-strip">
+        <div class="meta-chip"><div class="mc-label">Startup</div><div class="mc-value" id="metaName">—</div></div>
+        <div class="meta-chip"><div class="mc-label">Report Date</div><div class="mc-value" id="metaDate">—</div></div>
+        <div class="meta-chip"><div class="mc-label">Market</div><div class="mc-value" id="metaMarket">—</div></div>
+        <div class="meta-chip"><div class="mc-label">Stage</div><div class="mc-value" id="metaStage">—</div></div>
+        <div class="meta-chip"><div class="mc-label">Type</div><div class="mc-value" id="metaType">—</div></div>
+      </div>
+    </header>
+
+    <!-- ============ SECTION 1 — EXECUTIVE SUMMARY ============ -->
+    <section class="rsection reveal" id="sec1">
+      <div class="rsection-head">
+        <span class="rsection-num">01</span>
+        <div><div class="rsection-title">Executive Summary</div>
+        <div class="rsection-sub">A high-level synthesis of opportunity, founder fit, and viability based on your answers.</div></div>
+      </div>
+      <div class="exec-grid">
+        <div class="glass exec-card">
+          <div class="ec-icon" style="background:var(--blue-dim);color:var(--blue);">◎</div>
+          <h4>Opportunity Overview</h4>
+          <p id="execOpportunity">—</p>
+        </div>
+        <div class="glass exec-card">
+          <div class="ec-icon" style="background:var(--signal-dim);color:var(--signal);">▲</div>
+          <h4>Market Potential</h4>
+          <p id="execMarket">—</p>
+        </div>
+        <div class="glass exec-card">
+          <div class="ec-icon" style="background:var(--purple-dim);color:var(--purple);">✦</div>
+          <h4>Founder Alignment</h4>
+          <p id="execFounder">—</p>
+        </div>
+        <div class="glass exec-card">
+          <div class="ec-icon" style="background:var(--amber-dim);color:var(--amber);">⬡</div>
+          <h4>Business Viability</h4>
+          <p id="execViability">—</p>
+        </div>
+      </div>
+      <div class="glass" style="padding:24px;margin-top:16px;">
+        <h4 style="margin:0 0 4px;font-size:0.92rem;">Key Findings <span class="tag-est">Estimate</span></h4>
+        <div class="findings-list" id="keyFindings"></div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 2 — FOUNDER-MARKET FIT ============ -->
+    <section class="rsection reveal" id="sec2">
+      <div class="rsection-head">
+        <span class="rsection-num">02</span>
+        <div><div class="rsection-title">Founder-Market Fit</div>
+        <div class="rsection-sub">How well your background, motivation, and stated knowledge align with the problem and market you've chosen.</div></div>
+      </div>
+      <div class="glass fmf-wrap">
+        <div class="gauge-block">
+          <div class="gauge-wrap">
+            <svg viewBox="0 0 140 140">
+              <circle class="gauge-track" cx="70" cy="70" r="58"></circle>
+              <circle class="gauge-fill" id="fmfGaugeFill" cx="70" cy="70" r="58" stroke="#3ddc84" stroke-dasharray="364" stroke-dashoffset="364"></circle>
+            </svg>
+            <div class="gauge-center">
+              <div class="gauge-num" id="fmfGaugeNum">0</div>
+              <div class="gauge-suffix">/ 100</div>
+            </div>
+          </div>
+          <div class="confidence-pill" id="fmfConfidence">Confidence: Medium</div>
+        </div>
+        <div class="fmf-breakdown">
+          <div class="fmf-bar-row"><div class="fmf-bar-label"><span>Passion Alignment</span><strong id="fmfPassionNum">0</strong></div><div class="fmf-bar-track"><div class="fmf-bar-fill" id="fmfPassionBar"></div></div></div>
+          <div class="fmf-bar-row"><div class="fmf-bar-label"><span>Problem Understanding</span><strong id="fmfProblemNum">0</strong></div><div class="fmf-bar-track"><div class="fmf-bar-fill" id="fmfProblemBar"></div></div></div>
+          <div class="fmf-bar-row"><div class="fmf-bar-label"><span>Customer Understanding</span><strong id="fmfCustomerNum">0</strong></div><div class="fmf-bar-track"><div class="fmf-bar-fill" id="fmfCustomerBar"></div></div></div>
+          <div class="fmf-bar-row"><div class="fmf-bar-label"><span>Execution Readiness</span><strong id="fmfExecNum">0</strong></div><div class="fmf-bar-track"><div class="fmf-bar-fill" id="fmfExecBar"></div></div></div>
+          <div class="fmf-bar-row"><div class="fmf-bar-label"><span>Market Knowledge</span><strong id="fmfMarketNum">0</strong></div><div class="fmf-bar-track"><div class="fmf-bar-fill" id="fmfMarketBar"></div></div></div>
+          <div class="fmf-explain" id="fmfExplain">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 3 — MARKET SIZE ============ -->
+    <section class="rsection reveal" id="sec3">
+      <div class="rsection-head">
+        <span class="rsection-num">03</span>
+        <div><div class="rsection-title">Market Size Analysis <span class="tag-est">Estimated</span></div>
+        <div class="rsection-sub">Top-down market sizing based on your industry and target market. All figures are directional estimates, not verified market research.</div></div>
+      </div>
+      <div class="pyramid-wrap">
+        <svg id="pyramidSvg" viewBox="0 0 300 180" width="300" height="180"></svg>
+      </div>
+      <div class="market-grid">
+        <div class="glass market-card">
+          <div class="mk-label">TAM — Total Addressable Market</div>
+          <div class="mk-value" id="tamValue">—</div>
+          <div class="mk-desc">The full market demand for this category globally or nationally, before any segmentation.</div>
+        </div>
+        <div class="glass market-card">
+          <div class="mk-label">SAM — Serviceable Available Market</div>
+          <div class="mk-value" id="samValue">—</div>
+          <div class="mk-desc">The portion of TAM reachable given your stated geography and business model.</div>
+        </div>
+        <div class="glass market-card">
+          <div class="mk-label">SOM — Serviceable Obtainable Market</div>
+          <div class="mk-value" id="somValue">—</div>
+          <div class="mk-desc">A realistic 3–5 year capture target given typical early-stage market share.</div>
+        </div>
+      </div>
+      <div class="glass" style="padding:20px;margin-top:14px;">
+        <h4 style="margin:0 0 6px;font-size:0.88rem;">Estimated Revenue Potential <span class="tag-est">Estimate</span></h4>
+        <p style="margin:0;font-size:0.85rem;color:var(--text-1);line-height:1.6;" id="revenuePotential">—</p>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 4 — COMPETITOR ANALYSIS ============ -->
+    <section class="rsection reveal" id="sec4">
+      <div class="rsection-head">
+        <span class="rsection-num">04</span>
+        <div><div class="rsection-title">Competitor Analysis</div>
+        <div class="rsection-sub">Based on the competitors you listed, plus inferred category alternatives where relevant.</div></div>
+      </div>
+      <div class="glass table-wrap">
+        <div class="table-scroll">
+          <table class="rtable">
+            <thead><tr><th>Competitor</th><th>Strengths</th><th>Weaknesses</th><th>Positioning</th><th>Threat Level</th></tr></thead>
+            <tbody id="competitorBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="glass landscape-svg-box" style="margin-top:16px;">
+        <svg id="landscapeSvg" viewBox="0 0 480 320" width="480" height="320"></svg>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 5 — MARKET GAP ANALYSIS ============ -->
+    <section class="rsection reveal" id="sec5">
+      <div class="rsection-head">
+        <span class="rsection-num">05</span>
+        <div><div class="rsection-title">Market Gap Analysis <span class="tag-est">Estimate</span></div>
+        <div class="rsection-sub">Where the current market may be underserving customers, based on your stated problem and competitors.</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="glass info-card"><h4>🕳 Underserved Segments</h4><ul id="gapSegments"></ul></div>
+        <div class="glass info-card"><h4>🧩 Missing Features</h4><ul id="gapFeatures"></ul></div>
+        <div class="glass info-card"><h4>😤 Customer Frustrations</h4><ul id="gapFrustrations"></ul></div>
+        <div class="glass info-card"><h4>💡 Differentiation Opportunities</h4><ul id="gapDifferentiation"></ul></div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 6 — ICP ============ -->
+    <section class="rsection reveal" id="sec6">
+      <div class="rsection-head">
+        <span class="rsection-num">06</span>
+        <div><div class="rsection-title">Ideal Customer Profile</div>
+        <div class="rsection-sub">A composite profile of the organisation or individual most likely to buy, derived from your target customer description.</div></div>
+      </div>
+      <div class="glass icp-card">
+        <div class="icp-head">
+          <div class="icp-avatar">🏢</div>
+          <div><h4 id="icpHeadline">—</h4><span>Ideal Customer Profile · Estimate</span></div>
+        </div>
+        <div class="icp-body">
+          <div class="icp-field"><div class="icp-flabel">Company / Customer Type</div><div class="icp-fvalue" id="icpType">—</div></div>
+          <div class="icp-field"><div class="icp-flabel">Industry</div><div class="icp-fvalue" id="icpIndustry">—</div></div>
+          <div class="icp-field"><div class="icp-flabel">Size</div><div class="icp-fvalue" id="icpSize">—</div></div>
+          <div class="icp-field"><div class="icp-flabel">Geography</div><div class="icp-fvalue" id="icpGeo">—</div></div>
+          <div class="icp-field"><div class="icp-flabel">Budget</div><div class="icp-fvalue" id="icpBudget">—</div></div>
+          <div class="icp-field"><div class="icp-flabel">Primary Pain Points</div><div class="icp-fvalue" id="icpPain">—</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 7 — BUYER PERSONA ============ -->
+    <section class="rsection reveal" id="sec7">
+      <div class="rsection-head">
+        <span class="rsection-num">07</span>
+        <div><div class="rsection-title">Buyer Persona <span class="tag-est">Estimate</span></div>
+        <div class="rsection-sub">A representative individual decision-maker, generated to make your target customer easier to design for.</div></div>
+      </div>
+      <div class="glass persona-card">
+        <div class="persona-avatar">🧑‍💼</div>
+        <div class="persona-info">
+          <h4 id="personaName">—</h4>
+          <div class="persona-role" id="personaRole">—</div>
+          <div class="persona-detail-grid">
+            <div class="pd-block"><div class="pd-label">Goals</div><div class="pd-value" id="personaGoals">—</div></div>
+            <div class="pd-block"><div class="pd-label">Challenges</div><div class="pd-value" id="personaChallenges">—</div></div>
+            <div class="pd-block"><div class="pd-label">Decision Drivers</div><div class="pd-value" id="personaDrivers">—</div></div>
+            <div class="pd-block"><div class="pd-label">Buying Behaviour</div><div class="pd-value" id="personaBehaviour">—</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 8 — PAIN POINTS ============ -->
+    <section class="rsection reveal" id="sec8">
+      <div class="rsection-head">
+        <span class="rsection-num">08</span>
+        <div><div class="rsection-title">Customer Pain Points</div>
+        <div class="rsection-sub">Pain points clustered by estimated severity, based on the problem you described.</div></div>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-col high"><div class="pain-col-head">🔴 High Pain</div><div id="painHigh"></div></div>
+        <div class="pain-col medium"><div class="pain-col-head">🟠 Medium Pain</div><div id="painMedium"></div></div>
+        <div class="pain-col low"><div class="pain-col-head">🟢 Low Pain</div><div id="painLow"></div></div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 9 — BUYING TRIGGERS ============ -->
+    <section class="rsection reveal" id="sec9">
+      <div class="rsection-head">
+        <span class="rsection-num">09</span>
+        <div><div class="rsection-title">Buying Triggers <span class="tag-est">Estimate</span></div>
+        <div class="rsection-sub">What typically causes a customer like yours to act now rather than later.</div></div>
+      </div>
+      <div class="grid-3">
+        <div class="glass info-card"><h4>⚡ Triggers</h4><ul id="triggerList"></ul></div>
+        <div class="glass info-card"><h4>⏰ Urgency Factors</h4><ul id="urgencyList"></ul></div>
+        <div class="glass info-card"><h4>🎯 Motivations</h4><ul id="motivationList"></ul></div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 10 — BUYER OBJECTIONS ============ -->
+    <section class="rsection reveal" id="sec10">
+      <div class="rsection-head">
+        <span class="rsection-num">10</span>
+        <div><div class="rsection-title">Buyer Objections <span class="tag-est">Estimate</span></div>
+        <div class="rsection-sub">Likely hesitations a prospective customer will raise, with suggested ways to address each.</div></div>
+      </div>
+      <div id="objectionList"></div>
+    </section>
+
+    <!-- ============ SECTION 11 — CUSTOMER JOURNEY ============ -->
+    <section class="rsection reveal" id="sec11">
+      <div class="rsection-head">
+        <span class="rsection-num">11</span>
+        <div><div class="rsection-title">Customer Journey</div>
+        <div class="rsection-sub">Click a stage to see what's happening at that point in the funnel. <span class="tag-est">Estimate</span></div></div>
+      </div>
+      <div class="glass" style="padding:26px 22px 6px;">
+        <div class="journey-track" id="journeyTrack"></div>
+        <div id="journeyDescBox" style="padding:0 4px 20px;font-size:0.85rem;color:var(--text-1);line-height:1.6;"></div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 12 — SWOT ============ -->
+    <section class="rsection reveal" id="sec12">
+      <div class="rsection-head">
+        <span class="rsection-num">12</span>
+        <div><div class="rsection-title">SWOT Analysis <span class="tag-est">Estimate</span></div>
+        <div class="rsection-sub">Strengths and weaknesses based on your inputs; opportunities and threats based on market context.</div></div>
+      </div>
+      <div class="swot-grid">
+        <div class="swot-quad s"><div class="swot-quad-title">💪 Strengths</div><ul id="swotS"></ul></div>
+        <div class="swot-quad w"><div class="swot-quad-title">⚠️ Weaknesses</div><ul id="swotW"></ul></div>
+        <div class="swot-quad o"><div class="swot-quad-title">🌱 Opportunities</div><ul id="swotO"></ul></div>
+        <div class="swot-quad t"><div class="swot-quad-title">🛑 Threats</div><ul id="swotT"></ul></div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 13 — RISK ASSESSMENT ============ -->
+    <section class="rsection reveal" id="sec13">
+      <div class="rsection-head">
+        <span class="rsection-num">13</span>
+        <div><div class="rsection-title">Risk Assessment <span class="tag-est">Estimate</span></div>
+        <div class="rsection-sub">Six categories of startup risk, scored by estimated impact and probability based on your answers.</div></div>
+      </div>
+      <div class="glass" style="padding:10px 10px;display:flex;flex-direction:column;gap:8px;" id="riskMatrixBox"></div>
+    </section>
+
+    <!-- ============ SECTION 14 — PIVOT OPPORTUNITIES ============ -->
+    <section class="rsection reveal" id="sec14">
+      <div class="rsection-head">
+        <span class="rsection-num">14</span>
+        <div><div class="rsection-title">Pivot Opportunities <span class="tag-est">Estimate</span></div>
+        <div class="rsection-sub">Alternative directions worth keeping in your back pocket if the current path stalls.</div></div>
+      </div>
+      <div class="grid-4" id="pivotGrid"></div>
+    </section>
+
+    <!-- ============ SECTION 15 — GO/NO-GO ============ -->
+    <section class="rsection reveal" id="sec15">
+      <div class="rsection-head">
+        <span class="rsection-num">15</span>
+        <div><div class="rsection-title">Go / No-Go Recommendation</div>
+        <div class="rsection-sub">A synthesised recommendation based on every score calculated in this report. <span class="tag-est">Estimate</span></div></div>
+      </div>
+      <div class="glass verdict-wrap">
+        <div class="verdict-badge-large" id="verdictBadge">—</div>
+        <div class="confidence-meter-wrap">
+          <div class="confidence-meter-label"><span>Confidence</span><span id="verdictConfNum">0%</span></div>
+          <div class="confidence-meter-track"><div class="confidence-meter-fill" id="verdictConfFill"></div></div>
+        </div>
+        <div class="verdict-reasoning">
+          <h5>Reasoning</h5>
+          <ul id="verdictReasoning"></ul>
+          <h5>Key Assumptions</h5>
+          <ul id="verdictAssumptions"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 16 — 30 DAY PLAN ============ -->
+    <section class="rsection reveal" id="sec16">
+      <div class="rsection-head">
+        <span class="rsection-num">16</span>
+        <div><div class="rsection-title">30-Day Action Plan</div>
+        <div class="rsection-sub">A consulting-style roadmap tailored to your current development stage.</div></div>
+      </div>
+      <div id="weekPlanBox"></div>
+    </section>
+
+    <!-- ============ SECTION 17 — VC INVESTMENT READINESS ============ -->
+    <section class="rsection reveal" id="sec17">
+      <div class="rsection-head">
+        <span class="rsection-num">17</span>
+        <div><div class="rsection-title">VC Investment Readiness <span class="tag-est">Estimate</span></div>
+        <div class="rsection-sub">How a venture investor might score this opportunity today, across six standard diligence dimensions.</div></div>
+      </div>
+      <div class="glass radar-wrap">
+        <div class="radar-svg-box">
+          <svg id="radarSvg" viewBox="0 0 360 360" width="340" height="340"></svg>
+        </div>
+        <div>
+          <div class="ir-score-banner">
+            <div class="irs-num" id="irScoreNum" style="color:var(--signal);">0</div>
+            <div class="irs-label">Investment Readiness Score / 100</div>
+          </div>
+          <div class="radar-legend-list" id="radarLegend"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 18 — SUCCESS PROBABILITY ============ -->
+    <section class="rsection reveal" id="sec18">
+      <div class="rsection-head">
+        <span class="rsection-num">18</span>
+        <div><div class="rsection-title">Success Probability <span class="tag-est">Estimate</span></div>
+        <div class="rsection-sub">A single composite estimate combining founder fit, market size, competition, and risk.</div></div>
+      </div>
+      <div class="glass success-wrap">
+        <div class="gauge-block">
+          <div class="gauge-wrap">
+            <svg viewBox="0 0 140 140">
+              <circle class="gauge-track" cx="70" cy="70" r="58"></circle>
+              <circle class="gauge-fill" id="successGaugeFill" cx="70" cy="70" r="58" stroke="#3ddc84" stroke-dasharray="364" stroke-dashoffset="364"></circle>
+            </svg>
+            <div class="gauge-center"><div class="gauge-num" id="successGaugeNum">0</div><div class="gauge-suffix">%</div></div>
+          </div>
+        </div>
+        <div class="factor-list" id="successFactors"></div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 19 — INVESTOR SUMMARY ============ -->
+    <section class="rsection reveal" id="sec19">
+      <div class="rsection-head">
+        <span class="rsection-num">19</span>
+        <div><div class="rsection-title">Investor Summary</div>
+        <div class="rsection-sub">A condensed, one-page summary in VC-deck format — everything above, distilled.</div></div>
+      </div>
+      <div class="glass investor-doc">
+        <div class="investor-row"><div class="ir-label">Problem</div><div class="ir-value" id="invProblem">—</div></div>
+        <div class="investor-row"><div class="ir-label">Solution</div><div class="ir-value" id="invSolution">—</div></div>
+        <div class="investor-row"><div class="ir-label">Market</div><div class="ir-value" id="invMarket">—</div></div>
+        <div class="investor-row"><div class="ir-label">Competition</div><div class="ir-value" id="invCompetition">—</div></div>
+        <div class="investor-row"><div class="ir-label">Business Model</div><div class="ir-value" id="invBizmodel">—</div></div>
+        <div class="investor-row"><div class="ir-label">Traction</div><div class="ir-value" id="invTraction">—</div></div>
+        <div class="investor-row"><div class="ir-label">Risks</div><div class="ir-value" id="invRisks">—</div></div>
+        <div class="investor-row"><div class="ir-label">Recommendation</div><div class="ir-value" id="invRecommendation">—</div></div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION 20 — EXPORT ============ -->
+    <section class="rsection reveal export-grid-section" id="sec20">
+      <div class="rsection-head">
+        <span class="rsection-num">20</span>
+        <div><div class="rsection-title">Export &amp; Actions</div>
+        <div class="rsection-sub">Save, print, or start over.</div></div>
+      </div>
+      <div class="export-grid">
+        <div class="export-btn" id="exportPrint"><span class="eb-icon">🖨</span><span class="eb-label">Print Report</span></div>
+        <div class="export-btn" id="exportPdf"><span class="eb-icon">📄</span><span class="eb-label">Save as PDF</span></div>
+        <div class="export-btn" id="exportHtml"><span class="eb-icon">⬇</span><span class="eb-label">Download HTML</span></div>
+        <div class="export-btn danger" id="exportReset"><span class="eb-icon">↺</span><span class="eb-label">Reset Data</span></div>
+      </div>
+    </section>
+
+    <footer class="report-footer">
+      Startup Validation Intelligence Report · Generated entirely client-side from your answers · All market figures are estimates, not verified research
+    </footer>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "startupValidationWizard_v1";
+  var TOTAL_STEPS = 14;
+  var currentStep = 1;
+
+  var answers = {
+    idea:"", name:"", problem:"", customers:"", why:"",
+    validation:[], market:"", type:"", stage:"", industry:"",
+    bizmodel:"", pricing:"", competitors:"", teamsize:"", funding:""
+  };
+
+  /* ============================================================
+     PERSISTENCE
+  ============================================================ */
+  function saveProgress(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ answers: answers, step: currentStep }));
+    } catch(e){ /* storage unavailable */ }
+  }
+
+  function loadProgress(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return false;
+      var parsed = JSON.parse(raw);
+      if(parsed.answers) answers = Object.assign(answers, parsed.answers);
+      if(parsed.step) currentStep = parsed.step;
+      return true;
+    } catch(e){ return false; }
+  }
+
+  /* ============================================================
+     DOM REFS
+  ============================================================ */
+  var wizardScreen = document.getElementById("wizardScreen");
+  var reportScreen = document.getElementById("reportScreen");
+  var progressFill = document.getElementById("progressFill");
+  var progressText = document.getElementById("progressText");
+  var progressPct = document.getElementById("progressPct");
+  var prevBtn = document.getElementById("prevBtn");
+  var nextBtn = document.getElementById("nextBtn");
+  var steps = document.querySelectorAll(".wstep");
+
+  /* ============================================================
+     POPULATE FIELDS FROM SAVED ANSWERS (on load)
+  ============================================================ */
+  function hydrateFieldsFromAnswers(){
+    setVal('[data-field="idea"] textarea', answers.idea);
+    setVal('[data-field="name"] input', answers.name);
+    setVal('[data-field="problem"] textarea', answers.problem);
+    setVal('[data-field="customers"] textarea', answers.customers);
+    setVal('[data-field="why"] textarea', answers.why);
+    setVal('[data-field="market"] input', answers.market);
+    setVal('[data-field="competitors"] textarea', answers.competitors);
+
+    document.querySelectorAll('[data-field="validation"] .wcheck-item').forEach(function(item){
+      var key = item.getAttribute("data-val");
+      if(answers.validation.indexOf(key) > -1){
+        item.classList.add("checked");
+        item.querySelector("input").checked = true;
+      }
+    });
+
+    setRadioGroup('[data-field="type"] .wradio-item', answers.type);
+    setRadioGroup('[data-field="stage"] .wradio-item', answers.stage);
+    setRadioGroup('[data-step="12"] .wradio-item', answers.teamsize);
+    setRadioGroup('[data-step="13"] .wradio-item', answers.funding);
+
+    setSelectVal('[data-field="industry"] select', answers.industry);
+    setSelectVal('[data-field="bizmodel"] select', answers.bizmodel);
+    setSelectVal('[data-field="pricing"] select', answers.pricing);
+  }
+
+  function setVal(sel, val){
+    var el = document.querySelector(sel);
+    if(el && val) el.value = val;
+  }
+  function setSelectVal(sel, val){
+    var el = document.querySelector(sel);
+    if(el && val) el.value = val;
+  }
+  function setRadioGroup(sel, val){
+    if(!val) return;
+    document.querySelectorAll(sel).forEach(function(item){
+      if(item.getAttribute("data-val") === val){
+        item.classList.add("checked");
+        item.querySelector("input").checked = true;
+      }
+    });
+  }
+
+  /* ============================================================
+     WIRE UP INPUT LISTENERS
+  ============================================================ */
+  document.querySelector('[data-field="idea"] textarea').addEventListener("input", function(e){ answers.idea = e.target.value; saveProgress(); });
+  document.querySelector('[data-field="name"] input').addEventListener("input", function(e){ answers.name = e.target.value; saveProgress(); });
+  document.querySelector('[data-field="problem"] textarea').addEventListener("input", function(e){ answers.problem = e.target.value; saveProgress(); });
+  document.querySelector('[data-field="customers"] textarea').addEventListener("input", function(e){ answers.customers = e.target.value; saveProgress(); });
+  document.querySelector('[data-field="why"] textarea').addEventListener("input", function(e){ answers.why = e.target.value; saveProgress(); });
+  document.querySelector('[data-field="market"] input').addEventListener("input", function(e){ answers.market = e.target.value; saveProgress(); });
+  document.querySelector('[data-field="competitors"] textarea').addEventListener("input", function(e){ answers.competitors = e.target.value; saveProgress(); });
+
+  document.querySelectorAll('[data-field="validation"] .wcheck-item').forEach(function(item){
+    item.addEventListener("click", function(){
+      var key = item.getAttribute("data-val");
+      var input = item.querySelector("input");
+      input.checked = !input.checked;
+      item.classList.toggle("checked", input.checked);
+      var idx = answers.validation.indexOf(key);
+      if(input.checked && idx === -1) answers.validation.push(key);
+      if(!input.checked && idx > -1) answers.validation.splice(idx, 1);
+      saveProgress();
+    });
+  });
+
+  function wireRadioGroup(containerSel, answerKey){
+    document.querySelectorAll(containerSel + " .wradio-item").forEach(function(item){
+      item.addEventListener("click", function(){
+        document.querySelectorAll(containerSel + " .wradio-item").forEach(function(i){ i.classList.remove("checked"); i.querySelector("input").checked = false; });
+        item.classList.add("checked");
+        item.querySelector("input").checked = true;
+        answers[answerKey] = item.getAttribute("data-val");
+        saveProgress();
+      });
+    });
+  }
+  wireRadioGroup('[data-field="type"]', "type");
+  wireRadioGroup('[data-field="stage"]', "stage");
+  wireRadioGroup('[data-step="12"]', "teamsize");
+  wireRadioGroup('[data-step="13"]', "funding");
+
+  document.querySelector('[data-field="industry"] select').addEventListener("change", function(e){ answers.industry = e.target.value; saveProgress(); });
+  document.querySelector('[data-field="bizmodel"] select').addEventListener("change", function(e){ answers.bizmodel = e.target.value; saveProgress(); });
+  document.querySelector('[data-field="pricing"] select').addEventListener("change", function(e){ answers.pricing = e.target.value; saveProgress(); });
+
+  /* ============================================================
+     VALIDATION PER STEP
+  ============================================================ */
+  function validateStep(n){
+    clearErrors(n);
+    var stepEl = document.querySelector('.wstep[data-step="' + n + '"]');
+    var valid = true;
+
+    if(n === 1){
+      if(answers.idea.trim().length < 10){ markError(stepEl, '[data-field="idea"]'); valid = false; }
+      if(answers.name.trim().length < 1){ markError(stepEl, '[data-field="name"]'); valid = false; }
+    }
+    if(n === 2){
+      if(answers.problem.trim().length < 10){ markError(stepEl, '[data-field="problem"]'); valid = false; }
+    }
+    if(n === 3){
+      if(answers.customers.trim().length < 5){ markError(stepEl, '[data-field="customers"]'); valid = false; }
+    }
+    if(n === 4){
+      if(answers.why.trim().length < 5){ markError(stepEl, '[data-field="why"]'); valid = false; }
+    }
+    if(n === 6){
+      if(answers.market.trim().length < 2){ markError(stepEl, '[data-field="market"]'); valid = false; }
+    }
+    if(n === 7){
+      if(!answers.type){ markError(stepEl, '[data-field="type"]'); valid = false; }
+    }
+    if(n === 8){
+      if(!answers.stage){ markError(stepEl, '[data-field="stage"]'); valid = false; }
+    }
+    if(n === 9){
+      if(!answers.industry){ markError(stepEl, '[data-field="industry"]'); valid = false; }
+    }
+    if(n === 10){
+      if(!answers.bizmodel){ markError(stepEl, '[data-field="bizmodel"]'); valid = false; }
+      if(!answers.pricing){ markError(stepEl, '[data-field="pricing"]'); valid = false; }
+    }
+    if(n === 11){
+      if(answers.competitors.trim().length < 2){ markError(stepEl, '[data-field="competitors"]'); valid = false; }
+    }
+    if(n === 12){
+      if(!answers.teamsize){ markError(stepEl, '[data-step="12"]'); valid = false; }
+    }
+    if(n === 13){
+      if(!answers.funding){ markError(stepEl, '[data-step="13"]'); valid = false; }
+    }
+
+    return valid;
+  }
+
+  function markError(stepEl, fieldSel){
+    var field = stepEl.querySelector(fieldSel);
+    if(field) field.classList.add("error");
+  }
+  function clearErrors(n){
+    var stepEl = document.querySelector('.wstep[data-step="' + n + '"]');
+    stepEl.querySelectorAll(".wfield").forEach(function(f){ f.classList.remove("error"); });
+  }
+
+  /* ============================================================
+     NAVIGATION
+  ============================================================ */
+  function renderStep(){
+    steps.forEach(function(s){ s.classList.remove("active"); });
+    document.querySelector('.wstep[data-step="' + currentStep + '"]').classList.add("active");
+
+    var pct = Math.round((currentStep / TOTAL_STEPS) * 100);
+    progressFill.style.width = pct + "%";
+    progressText.textContent = "Step " + currentStep + " of " + TOTAL_STEPS;
+    progressPct.textContent = pct + "%";
+
+    prevBtn.disabled = currentStep === 1;
+    nextBtn.textContent = currentStep === TOTAL_STEPS ? "Generate Validation Report →" : "Next →";
+
+    if(currentStep === TOTAL_STEPS) buildReviewSummary();
+    saveProgress();
+  }
+
+  function buildReviewSummary(){
+    var box = document.getElementById("reviewSummary");
+    var rows = [
+      ["Startup Name", answers.name],
+      ["Idea", answers.idea],
+      ["Problem", answers.problem],
+      ["Target Customers", answers.customers],
+      ["Why", answers.why],
+      ["Existing Validation", answers.validation.length ? answers.validation.join(", ") : "None yet"],
+      ["Market", answers.market],
+      ["Type", answers.type],
+      ["Stage", answers.stage],
+      ["Industry", answers.industry],
+      ["Business Model", answers.bizmodel],
+      ["Pricing Model", answers.pricing],
+      ["Competitors", answers.competitors],
+      ["Team Size", answers.teamsize],
+      ["Funding Status", answers.funding]
+    ];
+    box.innerHTML = rows.map(function(r){
+      return '<div style="display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--border-faint);"><strong style="color:var(--text-0);min-width:160px;flex-shrink:0;font-size:0.78rem;">' + r[0] + '</strong><span>' + escapeHtml(String(r[1] || "—")) + '</span></div>';
+    }).join("");
+  }
+
+  function escapeHtml(str){
+    var div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  nextBtn.addEventListener("click", function(){
+    if(!validateStep(currentStep)) return;
+    if(currentStep === TOTAL_STEPS){
+      generateReport();
+      return;
+    }
+    currentStep++;
+    renderStep();
+  });
+
+  prevBtn.addEventListener("click", function(){
+    if(currentStep === 1) return;
+    currentStep--;
+    renderStep();
+  });
+
+  /* ============================================================
+     INIT WIZARD
+  ============================================================ */
+  var hadSavedProgress = loadProgress();
+  if(hadSavedProgress){
+    hydrateFieldsFromAnswers();
+  }
+  renderStep();
+
+  /* ============================================================================
+     ============================================================================
+     ANALYSIS ENGINE — runs once "Generate Validation Report" is clicked
+     ============================================================================
+     ============================================================================ */
+
+  function wordCount(str){ return (str || "").trim().split(/\s+/).filter(Boolean).length; }
+  function clamp(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
+
+  /* ---------- Founder-Market Fit scoring ---------- */
+  function scoreFounderMarketFit(){
+    var passion = clamp(40 + wordCount(answers.why) * 3, 20, 95);
+    var problemUnderstanding = clamp(35 + wordCount(answers.problem) * 3, 20, 95);
+    var customerUnderstanding = clamp(35 + wordCount(answers.customers) * 3, 20, 95);
+
+    var execBase = 40;
+    if(answers.stage === "MVP") execBase = 60;
+    if(answers.stage === "Beta") execBase = 72;
+    if(answers.stage === "Revenue") execBase = 85;
+    if(answers.stage === "Growth") execBase = 92;
+    var teamBoost = { "Solo Founder":0, "2-3 Co-founders":8, "4-10 People":14, "10+ People":18 }[answers.teamsize] || 0;
+    var execReadiness = clamp(execBase + teamBoost, 20, 98);
+
+    var marketKnowledge = clamp(45 + wordCount(answers.competitors) * 4 + wordCount(answers.market) * 2, 20, 95);
+
+    var overall = Math.round((passion*0.2 + problemUnderstanding*0.25 + customerUnderstanding*0.25 + execReadiness*0.15 + marketKnowledge*0.15));
+
+    var confidence = "Medium";
+    var totalWords = wordCount(answers.idea)+wordCount(answers.problem)+wordCount(answers.customers)+wordCount(answers.why);
+    if(totalWords > 80) confidence = "High";
+    if(totalWords < 30) confidence = "Low";
+
+    return {
+      overall: overall,
+      passion: Math.round(passion),
+      problemUnderstanding: Math.round(problemUnderstanding),
+      customerUnderstanding: Math.round(customerUnderstanding),
+      execReadiness: Math.round(execReadiness),
+      marketKnowledge: Math.round(marketKnowledge),
+      confidence: confidence
+    };
+  }
+
+  /* ---------- Market size estimation ---------- */
+  var INDUSTRY_TAM = {
+    "SaaS / Software": 480000000000,
+    "Fintech": 350000000000,
+    "Healthtech": 420000000000,
+    "E-commerce / Retail": 600000000000,
+    "Marketplace": 250000000000,
+    "EdTech": 180000000000,
+    "AgriTech / Food": 220000000000,
+    "Logistics / Supply Chain": 310000000000,
+    "Consumer Mobile App": 200000000000,
+    "AI / Deep Tech": 390000000000,
+    "Climate / CleanTech": 260000000000,
+    "Other": 150000000000
+  };
+
+  function formatMoney(n){
+    if(n >= 1e9) return "$" + (n/1e9).toFixed(1) + "B";
+    if(n >= 1e6) return "$" + (n/1e6).toFixed(1) + "M";
+    if(n >= 1e3) return "$" + (n/1e3).toFixed(1) + "K";
+    return "$" + Math.round(n);
+  }
+
+  function scoreMarketSize(){
+    var tam = INDUSTRY_TAM[answers.industry] || INDUSTRY_TAM["Other"];
+    // narrow TAM to SAM based on stated geography being non-global-sounding
+    var globalMarkets = ["united states","usa","global","worldwide","europe","north america"];
+    var marketLower = (answers.market || "").toLowerCase();
+    var isGlobal = globalMarkets.some(function(m){ return marketLower.indexOf(m) > -1; });
+    var samFraction = isGlobal ? 0.22 : 0.07;
+    var sam = tam * samFraction;
+    var somFraction = answers.stage === "Idea" ? 0.004 : answers.stage === "MVP" ? 0.008 : answers.stage === "Beta" ? 0.014 : 0.025;
+    var som = sam * somFraction;
+
+    return { tam: tam, sam: sam, som: som };
+  }
+
+  /* ---------- Competitor parsing ---------- */
+  function parseCompetitors(){
+    var raw = (answers.competitors || "").trim();
+    if(!raw) return [];
+    var lowerRaw = raw.toLowerCase();
+    if(lowerRaw.indexOf("none") > -1 || lowerRaw.indexOf("no competitor") > -1 || lowerRaw.indexOf("not aware") > -1){
+      return [];
+    }
+    return raw.split(/[,;\n]+/).map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 0; }).slice(0, 6);
+  }
+
+  function buildCompetitorRows(){
+    var list = parseCompetitors();
+    if(list.length === 0){
+      return [{
+        name: "No direct competitors identified",
+        strengths: "First-mover potential in this specific niche",
+        weaknesses: "Unproven demand — lack of competitors may also signal limited market pull",
+        positioning: "Category creator",
+        threat: "low"
+      }];
+    }
+    return list.map(function(name, i){
+      var threatPool = ["high","medium","medium","low"];
+      var threat = threatPool[i % threatPool.length];
+      return {
+        name: name,
+        strengths: "Established brand recognition and existing customer base in " + (answers.industry || "this category"),
+        weaknesses: "Likely slower to adapt; may underserve the specific niche described in your target customer profile",
+        positioning: "Incumbent / broad-market player",
+        threat: threat
+      };
+    });
+  }
+
+  /* ---------- Risk assessment ---------- */
+  function scoreRisks(fmf){
+    var marketRisk = clamp(50 + (answers.stage === "Idea" ? 15 : 0) - (parseCompetitors().length > 0 ? 5 : -10), 15, 90);
+    var executionRisk = clamp(90 - fmf.execReadiness, 10, 85);
+    var techRisk = answers.industry === "AI / Deep Tech" ? 65 : answers.industry === "Fintech" ? 55 : 35;
+    var competitionRisk = clamp(parseCompetitors().length * 12 + 25, 20, 88);
+    var fundingRisk = { "Bootstrapped":55, "Pre-seed / Friends & Family":50, "Seed Stage":35, "Series A+":20 }[answers.funding] || 50;
+    var adoptionRisk = clamp(70 - (answers.validation.length * 10), 15, 85);
+
+    return [
+      { name:"Market Risk", value: marketRisk },
+      { name:"Execution Risk", value: executionRisk },
+      { name:"Technology Risk", value: techRisk },
+      { name:"Competition Risk", value: competitionRisk },
+      { name:"Funding Risk", value: fundingRisk },
+      { name:"Adoption Risk", value: adoptionRisk }
+    ];
+  }
+
+  function riskColor(v){
+    if(v >= 65) return "#e8554d";
+    if(v >= 40) return "#e8a33d";
+    return "#3ddc84";
+  }
+  function riskLabelFor(v){
+    if(v >= 65) return "High";
+    if(v >= 40) return "Medium";
+    return "Low";
+  }
+
+  /* ---------- VC Investment Readiness ---------- */
+  function scoreInvestmentReadiness(fmf, marketSize){
+    var marketScore = clamp(Math.log10(marketSize.tam) * 9 - 30, 20, 95);
+    var founderScore = fmf.overall;
+    var tractionScore = clamp(answers.validation.length * 16 + (answers.stage === "Revenue" ? 20 : answers.stage === "Growth" ? 30 : 0), 10, 95);
+    var differentiationScore = clamp(70 - parseCompetitors().length * 6, 20, 85);
+    var scalabilityScore = { "B2B SaaS":85, "Marketplace (Commission)":80, "B2C Subscription":70, "Freemium":68, "Advertising":60, "E-commerce (Direct Sales)":55, "Transaction Fees":72, "Licensing":58, "Other":50 }[answers.bizmodel] || 55;
+    var monetizationScore = { "Flat Monthly Subscription":75, "Tiered Subscription":82, "Usage-Based / Metered":78, "One-Time Purchase":45, "Commission per Transaction":70, "Freemium with Paid Upgrade":65, "Not Decided Yet":30 }[answers.pricing] || 50;
+
+    var overall = Math.round(marketScore*0.2 + founderScore*0.2 + tractionScore*0.2 + differentiationScore*0.15 + scalabilityScore*0.125 + monetizationScore*0.125);
+
+    return {
+      overall: overall,
+      dims: [
+        { label:"Market", value: Math.round(marketScore), color:"#4d8ee8" },
+        { label:"Founder", value: Math.round(founderScore), color:"#3ddc84" },
+        { label:"Traction", value: Math.round(tractionScore), color:"#e8a33d" },
+        { label:"Differentiation", value: Math.round(differentiationScore), color:"#a17de8" },
+        { label:"Scalability", value: Math.round(scalabilityScore), color:"#e8554d" },
+        { label:"Monetization", value: Math.round(monetizationScore), color:"#4d8ee8" }
+      ]
+    };
+  }
+
+  /* ---------- Success probability ---------- */
+  function scoreSuccessProbability(fmf, risks, irScore){
+    var avgRisk = risks.reduce(function(sum,r){ return sum + r.value; }, 0) / risks.length;
+    var prob = Math.round(fmf.overall*0.35 + irScore*0.35 + (100-avgRisk)*0.30);
+    return clamp(prob, 5, 92);
+  }
+
+  /* ---------- Go/No-Go verdict ---------- */
+  function scoreVerdict(successProb, fmf, irScore){
+    var composite = Math.round((successProb + fmf.overall + irScore) / 3);
+    var verdict, badgeClass;
+    if(composite >= 72){ verdict = "GO"; badgeClass = "badge-go"; }
+    else if(composite >= 52){ verdict = "GO WITH CAUTION"; badgeClass = "badge-caution"; }
+    else if(composite >= 35){ verdict = "PIVOT"; badgeClass = "badge-pivot"; }
+    else { verdict = "NO-GO"; badgeClass = "badge-nogo"; }
+    return { verdict: verdict, badgeClass: badgeClass, composite: composite };
+  }
+
+  /* ============================================================================
+     MAIN REPORT GENERATION
+  ============================================================================ */
+  function generateReport(){
+    var fmf = scoreFounderMarketFit();
+    var marketSize = scoreMarketSize();
+    var risks = scoreRisks(fmf);
+    var irData = scoreInvestmentReadiness(fmf, marketSize);
+    var successProb = scoreSuccessProbability(fmf, risks, irData.overall);
+    var verdictData = scoreVerdict(successProb, fmf, irData.overall);
+    var competitorRows = buildCompetitorRows();
+
+    renderHeader();
+    renderSection1(fmf, marketSize, risks);
+    renderSection2(fmf);
+    renderSection3(marketSize);
+    renderSection4(competitorRows);
+    renderSection5();
+    renderSection6();
+    renderSection7();
+    renderSection8();
+    renderSection9();
+    renderSection10();
+    renderSection11();
+    renderSection12(competitorRows, risks);
+    renderSection13(risks);
+    renderSection14();
+    renderSection15(verdictData, fmf, irData);
+    renderSection16();
+    renderSection17(irData);
+    renderSection18(successProb, risks);
+    renderSection19(verdictData, competitorRows);
+
+    wizardScreen.style.display = "none";
+    reportScreen.classList.add("active");
+    window.scrollTo(0,0);
+
+    setupRevealObserver();
+    setupExportButtons();
+  }
+
+  function escapeHtml(str){
+    var div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  /* ---------- Header ---------- */
+  function renderHeader(){
+    document.getElementById("metaName").textContent = answers.name || "Untitled";
+    var today = new Date();
+    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    document.getElementById("metaDate").textContent = months[today.getMonth()] + " " + today.getDate() + ", " + today.getFullYear();
+    document.getElementById("metaMarket").textContent = answers.market || "—";
+    document.getElementById("metaStage").textContent = answers.stage || "—";
+    document.getElementById("metaType").textContent = answers.type || "—";
+  }
+
+  /* ---------- Section 1: Executive Summary ---------- */
+  function renderSection1(fmf, marketSize, risks){
+    document.getElementById("execOpportunity").textContent =
+      (answers.idea || "Your idea") + " targets " + (answers.customers || "a defined customer group") + " in the " + (answers.industry || "selected") + " space.";
+    document.getElementById("execMarket").textContent =
+      "Estimated TAM of " + formatMoney(marketSize.tam) + " in " + (answers.industry || "this category") + ", with a realistic SOM of " + formatMoney(marketSize.som) + " over 3–5 years.";
+    document.getElementById("execFounder").textContent =
+      "Founder-Market Fit scores " + fmf.overall + "/100, driven primarily by " + (fmf.problemUnderstanding >= fmf.customerUnderstanding ? "strong problem understanding" : "strong customer understanding") + ".";
+    document.getElementById("execViability").textContent =
+      "Business model: " + (answers.bizmodel || "not yet defined") + " with " + (answers.pricing || "an undetermined") + " pricing approach at the " + (answers.stage || "early") + " stage.";
+
+    var findings = [];
+    findings.push((answers.validation.length > 0 ? "You have " + answers.validation.length + " form(s) of existing validation (" + answers.validation.join(", ") + ")." : "No existing validation reported yet — this is the single highest-leverage next step."));
+    findings.push("Team configuration: " + (answers.teamsize || "not specified") + ", which is " + (answers.teamsize === "Solo Founder" ? "a common but higher-execution-risk starting point" : "a reasonable foundation for execution") + ".");
+    findings.push("Funding status (" + (answers.funding || "unspecified") + ") will shape your runway and the urgency of your next validation steps.");
+    findings.push("Average risk score across all six risk categories is " + Math.round(risks.reduce(function(s,r){return s+r.value;},0)/risks.length) + "/100 — see Section 13 for the full breakdown.");
+
+    document.getElementById("keyFindings").innerHTML = findings.map(function(f){
+      return '<div class="finding-item"><span class="fi-dot">●</span><span>' + escapeHtml(f) + '</span></div>';
+    }).join("");
+  }
+
+  /* ---------- Section 2: Founder-Market Fit ---------- */
+  function renderSection2(fmf){
+    var circumference = 364;
+    var offset = circumference - (circumference * fmf.overall / 100);
+    var color = fmf.overall >= 70 ? "#3ddc84" : fmf.overall >= 45 ? "#e8a33d" : "#e8554d";
+    var fill = document.getElementById("fmfGaugeFill");
+    fill.setAttribute("stroke", color);
+    requestAnimationFrame(function(){ fill.style.strokeDashoffset = offset; });
+    animateNum(document.getElementById("fmfGaugeNum"), fmf.overall);
+
+    var confEl = document.getElementById("fmfConfidence");
+    confEl.textContent = "Confidence: " + fmf.confidence;
+    confEl.style.background = fmf.confidence === "High" ? "rgba(61,220,132,0.15)" : fmf.confidence === "Low" ? "var(--red-dim)" : "var(--amber-dim)";
+    confEl.style.color = fmf.confidence === "High" ? "var(--signal)" : fmf.confidence === "Low" ? "var(--red)" : "var(--amber)";
+
+    setBar("fmfPassionBar", "fmfPassionNum", fmf.passion);
+    setBar("fmfProblemBar", "fmfProblemNum", fmf.problemUnderstanding);
+    setBar("fmfCustomerBar", "fmfCustomerNum", fmf.customerUnderstanding);
+    setBar("fmfExecBar", "fmfExecNum", fmf.execReadiness);
+    setBar("fmfMarketBar", "fmfMarketNum", fmf.marketKnowledge);
+
+    var weakest = ["passion","problemUnderstanding","customerUnderstanding","execReadiness","marketKnowledge"].reduce(function(a,b){ return fmf[a] < fmf[b] ? a : b; });
+    var weakestLabel = { passion:"personal motivation", problemUnderstanding:"problem clarity", customerUnderstanding:"customer specificity", execReadiness:"execution readiness", marketKnowledge:"market knowledge" }[weakest];
+    document.getElementById("fmfExplain").textContent =
+      "Overall fit is " + (fmf.overall>=70?"strong":fmf.overall>=45?"moderate":"early-stage") + ". The most actionable gap right now is " + weakestLabel + " — strengthening this before your next milestone will improve both this score and downstream investor readiness.";
+  }
+
+  function setBar(barId, numId, value){
+    document.getElementById(barId).style.width = value + "%";
+    animateNum(document.getElementById(numId), value);
+  }
+
+  function animateNum(el, target){
+    var start = 0;
+    var startTime = null;
+    var duration = 1100;
+    function step(ts){
+      if(!startTime) startTime = ts;
+      var progress = Math.min((ts-startTime)/duration, 1);
+      var eased = 1 - Math.pow(1-progress, 3);
+      el.textContent = Math.round(start + (target-start)*eased);
+      if(progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ---------- Section 3: Market Size ---------- */
+  function renderSection3(marketSize){
+    document.getElementById("tamValue").textContent = formatMoney(marketSize.tam);
+    document.getElementById("samValue").textContent = formatMoney(marketSize.sam);
+    document.getElementById("somValue").textContent = formatMoney(marketSize.som);
+    document.getElementById("revenuePotential").textContent =
+      "If you capture your estimated SOM of " + formatMoney(marketSize.som) + " within 3–5 years, and assuming a " + (answers.pricing || "subscription-style") + " pricing model, this translates to a meaningful but not yet verified revenue ceiling for the current strategy. Treat this as a planning input, not a forecast.";
+
+    buildPyramid(marketSize);
+  }
+
+  function buildPyramid(marketSize){
+    var svg = document.getElementById("pyramidSvg");
+    var ns = "http://www.w3.org/2000/svg";
+    svg.innerHTML = "";
+
+    var layers = [
+      { label:"TAM", color:"#1c3a2e", textColor:"#3ddc84", w:280, y:10 },
+      { label:"SAM", color:"#2a3a4a", textColor:"#4d8ee8", w:190, y:68 },
+      { label:"SOM", color:"#3a2e1c", textColor:"#e8a33d", w:100, y:126 }
+    ];
+    var h = 46;
+    layers.forEach(function(layer){
+      var x = (300 - layer.w) / 2;
+      var rect = document.createElementNS(ns, "rect");
+      rect.setAttribute("x", x);
+      rect.setAttribute("y", layer.y);
+      rect.setAttribute("width", layer.w);
+      rect.setAttribute("height", h-6);
+      rect.setAttribute("rx", 8);
+      rect.setAttribute("fill", layer.color);
+      rect.setAttribute("stroke", layer.textColor);
+      rect.setAttribute("stroke-opacity", "0.4");
+      svg.appendChild(rect);
+
+      var text = document.createElementNS(ns, "text");
+      text.setAttribute("x", 150);
+      text.setAttribute("y", layer.y + (h-6)/2 + 5);
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("fill", layer.textColor);
+      text.setAttribute("font-family", "JetBrains Mono, monospace");
+      text.setAttribute("font-size", "13");
+      text.setAttribute("font-weight", "700");
+      text.textContent = layer.label;
+      svg.appendChild(text);
+    });
+  }
+
+  /* ---------- Section 4: Competitors ---------- */
+  function renderSection4(rows){
+    var tbody = document.getElementById("competitorBody");
+    var threatBadge = { high:"badge-high", medium:"badge-medium", low:"badge-low" };
+    tbody.innerHTML = rows.map(function(r){
+      return '<tr><td class="strong-cell">' + escapeHtml(r.name) + '</td><td>' + escapeHtml(r.strengths) + '</td><td>' + escapeHtml(r.weaknesses) + '</td><td>' + escapeHtml(r.positioning) + '</td><td><span class="badge ' + threatBadge[r.threat] + '">' + r.threat.charAt(0).toUpperCase()+r.threat.slice(1) + '</span></td></tr>';
+    }).join("");
+
+    buildLandscapeChart(rows);
+  }
+
+  function buildLandscapeChart(rows){
+    var svg = document.getElementById("landscapeSvg");
+    var ns = "http://www.w3.org/2000/svg";
+    svg.innerHTML = "";
+    var w = 480, h = 320, pad = 50;
+
+    var xAxis = document.createElementNS(ns, "line");
+    xAxis.setAttribute("x1", pad); xAxis.setAttribute("y1", h-pad); xAxis.setAttribute("x2", w-pad); xAxis.setAttribute("y2", h-pad);
+    xAxis.setAttribute("stroke", "rgba(255,255,255,0.15)");
+    svg.appendChild(xAxis);
+    var yAxis = document.createElementNS(ns, "line");
+    yAxis.setAttribute("x1", pad); yAxis.setAttribute("y1", pad); yAxis.setAttribute("x2", pad); yAxis.setAttribute("y2", h-pad);
+    yAxis.setAttribute("stroke", "rgba(255,255,255,0.15)");
+    svg.appendChild(yAxis);
+
+    function labelAxis(x,y,text,anchor){
+      var t = document.createElementNS(ns, "text");
+      t.setAttribute("x", x); t.setAttribute("y", y);
+      t.setAttribute("fill", "#65696f"); t.setAttribute("font-size","10");
+      t.setAttribute("font-family","JetBrains Mono, monospace");
+      t.setAttribute("text-anchor", anchor || "middle");
+      t.textContent = text;
+      svg.appendChild(t);
+    }
+    labelAxis(w/2, h-12, "← Niche Focus    Positioning    Broad Market →");
+    labelAxis(20, h/2, "Threat", "middle");
+
+    var threatY = { high: pad+30, medium: h/2, low: h-pad-30 };
+    var colors = { high:"#e8554d", medium:"#e8a33d", low:"#3ddc84" };
+
+    rows.forEach(function(r, i){
+      var x = pad + 40 + (i * ((w-pad-90)/Math.max(rows.length-1,1)));
+      var y = threatY[r.threat] + (((i*37) % 16) - 8);
+
+      var circle = document.createElementNS(ns, "circle");
+      circle.setAttribute("cx", x); circle.setAttribute("cy", y); circle.setAttribute("r", 9);
+      circle.setAttribute("fill", colors[r.threat]); circle.setAttribute("fill-opacity","0.8");
+      circle.setAttribute("stroke", "#0a0b0d"); circle.setAttribute("stroke-width","2");
+      svg.appendChild(circle);
+
+      var label = document.createElementNS(ns, "text");
+      label.setAttribute("x", x); label.setAttribute("y", y - 14);
+      label.setAttribute("fill", "#a6aab3"); label.setAttribute("font-size","9.5");
+      label.setAttribute("text-anchor","middle");
+      label.setAttribute("font-family","Inter, sans-serif");
+      var shortName = r.name.length > 16 ? r.name.slice(0,14)+"…" : r.name;
+      label.textContent = shortName;
+      svg.appendChild(label);
+    });
+  }
+
+  /* ---------- Section 5: Market Gap Analysis ---------- */
+  function renderSection5(){
+    var industry = answers.industry || "this category";
+    var segments = [
+      "Customers whose " + (answers.problem ? "exact situation (\"" + truncate(answers.problem, 60) + "\")" : "specific need") + " isn't addressed by broad incumbents",
+      "Smaller or niche " + (answers.customers || "customer segments") + " that large competitors consider too small to prioritise",
+      parseCompetitors().length === 0 ? "The entire category may be underserved — no direct competitors were identified" : "Customers currently forced into workarounds because existing tools weren't built for their exact use case"
+    ];
+    var features = [
+      "Features tailored specifically to " + (answers.customers || "your target customer") + " rather than a generic audience",
+      "A pricing model aligned to " + (answers.pricing || "your chosen") + " — many incumbents may use outdated or mismatched pricing",
+      "Faster, simpler onboarding for a " + (answers.teamsize === "Solo Founder" ? "lean, fast-moving" : "focused") + " product experience"
+    ];
+    var frustrations = [
+      "Cost or complexity of existing alternatives in " + industry,
+      "Generic solutions that don't reflect the specific problem: " + (answers.problem ? truncate(answers.problem, 70) : "the one you described"),
+      "Slow support or lack of attention from larger incumbent players"
+    ];
+    var differentiation = [
+      "Deep focus on one well-defined customer rather than broad horizontal coverage",
+      "Founder's direct motivation (\"" + truncate(answers.why, 70) + "\") as a credible, story-driven differentiator",
+      "Opportunity to build a simpler, more modern experience than legacy alternatives in " + industry
+    ];
+
+    fillList("gapSegments", segments);
+    fillList("gapFeatures", features);
+    fillList("gapFrustrations", frustrations);
+    fillList("gapDifferentiation", differentiation);
+  }
+
+  function truncate(str, n){
+    str = str || "";
+    return str.length > n ? str.slice(0,n) + "…" : str;
+  }
+
+  function fillList(id, items){
+    document.getElementById(id).innerHTML = items.map(function(i){ return "<li>" + escapeHtml(i) + "</li>"; }).join("");
+  }
+
+  /* ---------- Section 6: ICP ---------- */
+  function renderSection6(){
+    document.getElementById("icpHeadline").textContent = (answers.customers || "Target Customer") + " — " + (answers.market || "Primary Market");
+    document.getElementById("icpType").textContent = answers.bizmodel && answers.bizmodel.indexOf("B2B") > -1 ? "Business / Organisation" : "Individual Consumer";
+    document.getElementById("icpIndustry").textContent = answers.industry || "Not enough information provided.";
+    document.getElementById("icpSize").textContent = answers.bizmodel && answers.bizmodel.indexOf("B2B") > -1 ? "Small to mid-sized organisation (estimate)" : "N/A — consumer profile";
+    document.getElementById("icpGeo").textContent = answers.market || "Not enough information provided.";
+    document.getElementById("icpBudget").textContent = answers.pricing === "Not Decided Yet" ? "Not enough information provided." : "Willing to pay for a solution priced via " + (answers.pricing || "an undetermined model");
+    document.getElementById("icpPain").textContent = answers.problem || "Not enough information provided.";
+  }
+
+  /* ---------- Section 7: Buyer Persona ---------- */
+  function renderSection7(){
+    var isB2B = answers.bizmodel && answers.bizmodel.indexOf("B2B") > -1;
+    document.getElementById("personaName").textContent = isB2B ? "Alex Morgan" : "Jordan Lee";
+    document.getElementById("personaRole").textContent = isB2B ? "Decision-maker / Department Lead at a " + (answers.industry || "target") + " organisation" : "Representative customer in " + (answers.customers || "your target segment");
+    document.getElementById("personaGoals").textContent = "Solve: " + (answers.problem || "the core problem you described") + ", efficiently and affordably.";
+    document.getElementById("personaChallenges").textContent = "Currently relies on " + (parseCompetitors().length ? parseCompetitors()[0] : "manual workarounds or informal alternatives") + ", which is imperfect for their needs.";
+    document.getElementById("personaDrivers").textContent = "Price relative to value, ease of adoption, and trust signals like reviews or referrals.";
+    document.getElementById("personaBehaviour").textContent = isB2B ? "Likely requires approval from a budget holder; evaluates 2–3 options before committing." : "Likely to try low-commitment options first (free trial, freemium tier) before paying.";
+  }
+
+  /* ---------- Section 8: Pain Points ---------- */
+  function renderSection8(){
+    var problem = answers.problem || "the core problem";
+    var high = ["Direct cost or time lost due to: " + truncate(problem, 80), "Lack of a dedicated solution forces reliance on generic tools or manual processes"];
+    var medium = ["Switching costs from current alternative (" + (parseCompetitors()[0] || "status quo") + ")", "Uncertainty about ROI of trying a new, unproven solution"];
+    var low = ["Minor UI/UX friction in current workflow", "Preference for established brands over new entrants"];
+
+    fillPainCol("painHigh", high);
+    fillPainCol("painMedium", medium);
+    fillPainCol("painLow", low);
+  }
+
+  function fillPainCol(id, items){
+    document.getElementById(id).innerHTML = items.map(function(i){ return '<div class="pain-item">' + escapeHtml(i) + '</div>'; }).join("");
+  }
+
+  /* ---------- Section 9: Buying Triggers ---------- */
+  function renderSection9(){
+    fillList("triggerList", [
+      "A specific bad experience with current alternative (" + (parseCompetitors()[0] || "status quo") + ")",
+      "Growth or change in circumstances that makes the problem more acute",
+      "Recommendation or referral from a peer who solved a similar problem"
+    ]);
+    fillList("urgencyList", [
+      "Cost of inaction compounding over time",
+      answers.stage === "Idea" || answers.stage === "MVP" ? "Limited urgency until product is proven — early focus should be on validation, not urgency-based sales tactics" : "Competitive pressure to adopt a better solution before rivals do"
+    ]);
+    fillList("motivationList", [
+      "Save time or money relative to current approach",
+      "Reduce risk or stress associated with " + truncate(answers.problem, 60),
+      "Gain a capability that wasn't previously accessible or affordable"
+    ]);
+  }
+
+  /* ---------- Section 10: Buyer Objections ---------- */
+  function renderSection10(){
+    var objections = [
+      { icon:"💰", title:"\"Is this worth the price?\"", mitigation: "<strong>Mitigation:</strong> Quantify the cost of the current problem in time or money, and show your pricing as a clear fraction of that cost." },
+      { icon:"🔍", title:"\"How is this different from " + (parseCompetitors()[0] || "what I use now") + "?\"", mitigation: "<strong>Mitigation:</strong> Lead with the specific niche or workflow you serve that broader incumbents don't optimise for." },
+      { icon:"🛡️", title:"\"Can I trust an early-stage / unproven product?\"", mitigation: "<strong>Mitigation:</strong> Use case studies, testimonials, or a generous trial period to reduce perceived risk — especially important at the " + (answers.stage || "current") + " stage." },
+      { icon:"⏱️", title:"\"Do I have time to switch or onboard?\"", mitigation: "<strong>Mitigation:</strong> Emphasize low setup time and offer migration support or guided onboarding." }
+    ];
+    document.getElementById("objectionList").innerHTML = objections.map(function(o){
+      return '<div class="obj-item"><span class="obj-icon">' + o.icon + '</span><div><div class="obj-title">' + o.title + '</div><div class="obj-mitigation">' + o.mitigation + '</div></div></div>';
+    }).join("");
+  }
+
+  /* ---------- Section 11: Customer Journey ---------- */
+  var journeyStages = [
+    { key:"Awareness", desc: "Customer realises they have a problem: \"" + "PROBLEM_PLACEHOLDER" + "\". They may not yet know a solution like yours exists." },
+    { key:"Interest", desc: "They start researching options, encountering you alongside alternatives like " + "COMPETITOR_PLACEHOLDER" + "." },
+    { key:"Consideration", desc: "They compare your offering against alternatives on price, features, and trust signals." },
+    { key:"Evaluation", desc: "They trial or pilot the product, weighing it against the objections covered in Section 10." },
+    { key:"Purchase", desc: "They commit — likely via your stated pricing model: " + "PRICING_PLACEHOLDER" + "." },
+    { key:"Retention", desc: "Ongoing value delivery determines whether they continue paying past the first cycle." },
+    { key:"Referral", desc: "Satisfied customers in " + "CUSTOMERS_PLACEHOLDER" + " refer peers, compounding organic growth." }
+  ];
+
+  function renderSection11(){
+    var track = document.getElementById("journeyTrack");
+    var descBox = document.getElementById("journeyDescBox");
+
+    var resolvedStages = journeyStages.map(function(s){
+      return {
+        key: s.key,
+        desc: s.desc
+          .replace("PROBLEM_PLACEHOLDER", truncate(answers.problem,70) || "their core problem")
+          .replace("COMPETITOR_PLACEHOLDER", parseCompetitors()[0] || "other alternatives")
+          .replace("PRICING_PLACEHOLDER", answers.pricing || "your chosen model")
+          .replace("CUSTOMERS_PLACEHOLDER", answers.customers || "your target segment")
+      };
+    });
+
+    track.innerHTML = resolvedStages.map(function(s, i){
+      return '<div class="journey-stage' + (i===0?' active':'') + '" data-idx="' + i + '">' +
+        '<div class="journey-dot-row"><div class="journey-dot">' + (i+1) + '</div><div class="journey-line"></div></div>' +
+        '<div class="journey-label">' + s.key + '</div>' +
+        '</div>';
+    }).join("");
+
+    function showDesc(idx){
+      descBox.innerHTML = '<strong style="color:var(--text-0);">' + resolvedStages[idx].key + ':</strong> ' + escapeHtml(resolvedStages[idx].desc);
+    }
+    showDesc(0);
+
+    track.querySelectorAll(".journey-stage").forEach(function(stageEl){
+      stageEl.addEventListener("click", function(){
+        track.querySelectorAll(".journey-stage").forEach(function(s){ s.classList.remove("active"); });
+        stageEl.classList.add("active");
+        showDesc(parseInt(stageEl.getAttribute("data-idx"),10));
+      });
+    });
+  }
+
+  /* ---------- Section 12: SWOT ---------- */
+  function renderSection12(competitorRows, risks){
+    var strengths = [
+      answers.why ? "Founder motivation rooted in personal experience: \"" + truncate(answers.why,70) + "\"" : "Founder has identified a specific problem worth solving",
+      answers.validation.length > 0 ? "Existing validation signals: " + answers.validation.join(", ") : "Clear articulation of target customer and problem",
+      "Team structure (" + (answers.teamsize || "unspecified") + ") provides a foundation for execution"
+    ];
+    var weaknesses = [
+      answers.validation.length === 0 ? "No existing validation (users, revenue, or waitlist) yet" : "Validation is still early-stage relative to deployment scale",
+      answers.funding === "Bootstrapped" ? "Limited runway without external funding" : "Funding stage may constrain speed of execution",
+      answers.pricing === "Not Decided Yet" ? "Pricing model not yet finalised, limiting revenue forecasting" : "Business model still unproven at scale"
+    ];
+    var opportunities = [
+      "Estimated market (Section 3) suggests room for a focused new entrant",
+      competitorRows.length <= 1 ? "Limited direct competition identified — possible category-creation opportunity" : "Differentiation opportunities exist relative to incumbents (see Section 5)",
+      "Growing relevance of " + (answers.industry || "this category") + " as a sector"
+    ];
+    var threats = [
+      competitorRows.length > 2 ? "Multiple established competitors could out-resource a new entrant" : "Risk that low competition reflects low demand, not white space",
+      "Macroeconomic or funding-environment shifts could affect " + (answers.funding || "your") + " stage timeline",
+      "Execution risk scored at " + (risks.find(function(r){return r.name==="Execution Risk";}) || {value:50}).value + "/100 in Section 13"
+    ];
+
+    fillList("swotS", strengths);
+    fillList("swotW", weaknesses);
+    fillList("swotO", opportunities);
+    fillList("swotT", threats);
+  }
+
+  /* ---------- Section 13: Risk Matrix ---------- */
+  function renderSection13(risks){
+    var box = document.getElementById("riskMatrixBox");
+    box.innerHTML = risks.map(function(r){
+      var color = riskColor(r.value);
+      var label = riskLabelFor(r.value);
+      var badgeClass = label === "High" ? "badge-high" : label === "Medium" ? "badge-medium" : "badge-low";
+      return '<div class="risk-row glass">' +
+        '<div class="risk-name">' + r.name + '</div>' +
+        '<div class="risk-bar-track"><div class="risk-bar-fill" style="width:' + r.value + '%;background:' + color + '"></div></div>' +
+        '<div><span class="badge ' + badgeClass + '">' + label + '</span></div>' +
+        '<div class="mono" style="font-size:0.85rem;color:var(--text-1);">' + r.value + '/100</div>' +
+        '</div>';
+    }).join("");
+  }
+
+  /* ---------- Section 14: Pivot Opportunities ---------- */
+  function renderSection14(){
+    var pivots = [
+      { icon:"🌍", title:"Alternative Markets", body: "Consider geographies adjacent to " + (answers.market || "your current target") + " with similar customer needs but less competitive density." },
+      { icon:"👥", title:"Alternative Segments", body: "If " + (answers.customers || "your current segment") + " proves hard to reach, consider adjacent customer types facing the same core problem." },
+      { icon:"💳", title:"Alternative Monetization", body: "If " + (answers.pricing || "your current pricing") + " underperforms, test usage-based or freemium variants common in " + (answers.industry || "this industry") + "." },
+      { icon:"🎯", title:"Alternative Positioning", body: "Reposition from a broad solution to a specialist tool for one acute use case within \"" + truncate(answers.problem, 50) + "\"." }
+    ];
+    document.getElementById("pivotGrid").innerHTML = pivots.map(function(p){
+      return '<div class="glass pivot-card"><div class="pv-icon">' + p.icon + '</div><h4>' + p.title + '</h4><p>' + escapeHtml(p.body) + '</p></div>';
+    }).join("");
+  }
+
+  /* ---------- Section 15: Go/No-Go ---------- */
+  function renderSection15(verdictData, fmf, irData){
+    var badge = document.getElementById("verdictBadge");
+    badge.textContent = verdictData.verdict;
+    badge.className = "verdict-badge-large " + verdictData.badgeClass;
+
+    document.getElementById("verdictConfNum").textContent = verdictData.composite + "%";
+    requestAnimationFrame(function(){
+      document.getElementById("verdictConfFill").style.width = verdictData.composite + "%";
+    });
+
+    var reasoning = [
+      "Founder-Market Fit score: " + fmf.overall + "/100 (" + fmf.confidence + " confidence)",
+      "Investment Readiness score: " + irData.overall + "/100",
+      "Composite recommendation score: " + verdictData.composite + "/100",
+      answers.validation.length === 0 ? "No existing validation was reported — this materially lowered confidence in the recommendation" : "Existing validation (" + answers.validation.join(", ") + ") positively influenced this recommendation"
+    ];
+    var assumptions = [
+      "Market size figures in Section 3 are directional estimates based on industry category, not primary research",
+      "Competitor threat levels are inferred from names provided, not verified competitive intelligence",
+      "This recommendation assumes your stated answers are accurate and complete"
+    ];
+
+    document.getElementById("verdictReasoning").innerHTML = reasoning.map(function(r){ return "<li>"+escapeHtml(r)+"</li>"; }).join("");
+    document.getElementById("verdictAssumptions").innerHTML = assumptions.map(function(a){ return "<li>"+escapeHtml(a)+"</li>"; }).join("");
+  }
+
+  /* ---------- Section 16: 30-Day Plan ---------- */
+  function renderSection16(){
+    var stage = answers.stage || "Idea";
+    var plans = {
+      "Idea": [
+        { week:"Week 1", tasks:[["Talk to 15 potential customers", "Validate problem severity", "high"],["Sketch the core MVP feature set", "Defines build scope", "high"]] },
+        { week:"Week 2", tasks:[["Build a clickable prototype", "Tangible artifact to test reactions", "high"],["Set up a landing page with waitlist", "Starts capturing demand signal", "medium"]] },
+        { week:"Week 3", tasks:[["Run 10 prototype walkthroughs", "Gather direct usability feedback", "high"],["Refine pricing hypothesis", "Prepares for Section 10 objections", "medium"]] },
+        { week:"Week 4", tasks:[["Decide MVP scope for build", "Moves from idea to MVP stage", "high"],["Identify first 5 design partners", "Sets up early traction", "medium"]] }
+      ],
+      "MVP": [
+        { week:"Week 1", tasks:[["Ship MVP to 5 design partners", "Real-world usage feedback", "high"],["Instrument basic usage analytics", "Enables data-driven iteration", "medium"]] },
+        { week:"Week 2", tasks:[["Conduct user interviews with all 5", "Surface friction points", "high"],["Fix top 3 reported issues", "Improves retention odds", "high"]] },
+        { week:"Week 3", tasks:[["Expand to 20 total users", "Tests early scalability", "medium"],["Test initial pricing with 3 users", "Validates willingness to pay", "high"]] },
+        { week:"Week 4", tasks:[["Review retention/usage data", "Informs go/no-go on current direction", "high"],["Plan beta launch criteria", "Sets next-stage milestones", "medium"]] }
+      ],
+      "Beta": [
+        { week:"Week 1", tasks:[["Expand beta to target cohort size", "Builds statistically useful sample", "high"],["Set up feedback collection loop", "Systematic insight capture", "medium"]] },
+        { week:"Week 2", tasks:[["Analyze drop-off points", "Identify retention blockers", "high"],["Begin first paid pilot conversations", "Tests monetization readiness", "high"]] },
+        { week:"Week 3", tasks:[["Convert 3-5 beta users to paying", "First revenue proof point", "high"],["Document case studies", "Builds sales/investor collateral", "medium"]] },
+        { week:"Week 4", tasks:[["Set pricing tiers based on data", "Finalizes monetization model", "high"],["Prepare investor update", "Keeps stakeholders aligned", "low"]] }
+      ],
+      "Revenue": [
+        { week:"Week 1", tasks:[["Audit revenue concentration risk", "Avoid over-reliance on few accounts", "high"],["Map expansion revenue opportunities", "Identify upsell paths", "medium"]] },
+        { week:"Week 2", tasks:[["Test one new acquisition channel", "Diversifies growth sources", "high"],["Formalize onboarding flow", "Improves conversion consistency", "medium"]] },
+        { week:"Week 3", tasks:[["Review churn and its root causes", "Protects existing revenue base", "high"],["Begin hiring plan if needed", "Prepares for scale", "low"]] },
+        { week:"Week 4", tasks:[["Set next quarter revenue target", "Creates accountability", "high"],["Update investor materials", "Keeps fundraising-ready", "medium"]] }
+      ],
+      "Growth": [
+        { week:"Week 1", tasks:[["Review unit economics at scale", "Confirms sustainable growth", "high"],["Identify highest-ROI channel", "Focuses growth spend", "high"]] },
+        { week:"Week 2", tasks:[["Double down on best channel", "Compounds proven growth lever", "high"],["Audit team capacity vs. growth rate", "Prevents operational strain", "medium"]] },
+        { week:"Week 3", tasks:[["Explore adjacent market expansion", "Tests Section 14 pivot options", "medium"],["Strengthen retention programs", "Protects LTV as base grows", "high"]] },
+        { week:"Week 4", tasks:[["Prepare for next funding round if needed", "Aligns with Section 17 readiness", "medium"],["Set quarterly OKRs", "Aligns team on growth stage goals", "medium"]] }
+      ]
+    };
+
+    var weeks = plans[stage] || plans["Idea"];
+    var box = document.getElementById("weekPlanBox");
+    box.innerHTML = weeks.map(function(w){
+      return '<div class="week-block"><div class="week-head">' + w.week + ' <span class="week-chip">' + stage + ' stage</span></div>' +
+        w.tasks.map(function(t){
+          var prioBadge = t[2] === "high" ? "badge-high" : t[2] === "medium" ? "badge-medium" : "badge-low";
+          return '<div class="task-row"><div class="task-name">' + t[0] + '</div><div class="task-outcome">' + t[1] + '</div><div><span class="badge ' + prioBadge + '">' + t[2].charAt(0).toUpperCase()+t[2].slice(1) + '</span></div></div>';
+        }).join("") +
+      '</div>';
+    }).join("");
+  }
+
+  /* ---------- Section 17: VC Investment Readiness Radar ---------- */
+  function renderSection17(irData){
+    animateNum(document.getElementById("irScoreNum"), irData.overall);
+    document.getElementById("irScoreNum").style.color = irData.overall >= 65 ? "#3ddc84" : irData.overall >= 40 ? "#e8a33d" : "#e8554d";
+
+    buildRadar(irData.dims);
+
+    document.getElementById("radarLegend").innerHTML = irData.dims.map(function(d){
+      return '<div class="radar-legend-item"><div class="rli-left"><span class="rli-dot" style="background:' + d.color + '"></span>' + d.label + '</div><span class="rli-val">' + d.value + '</span></div>';
+    }).join("");
+  }
+
+  function buildRadar(dims){
+    var svg = document.getElementById("radarSvg");
+    svg.innerHTML = "";
+    var ns = "http://www.w3.org/2000/svg";
+    var cx = 180, cy = 180, maxR = 130;
+    var n = dims.length;
+    var levels = 4;
+
+    function pointFor(i, value){
+      var angle = (Math.PI*2*i/n) - Math.PI/2;
+      var r = (value/100) * maxR;
+      return { x: cx + r*Math.cos(angle), y: cy + r*Math.sin(angle) };
+    }
+
+    for(var lvl=1; lvl<=levels; lvl++){
+      var ringPts = [];
+      for(var i=0;i<n;i++){
+        var p = pointFor(i, (lvl/levels)*100);
+        ringPts.push(p.x.toFixed(1)+","+p.y.toFixed(1));
+      }
+      var ring = document.createElementNS(ns,"polygon");
+      ring.setAttribute("points", ringPts.join(" "));
+      ring.setAttribute("fill","none");
+      ring.setAttribute("stroke","rgba(255,255,255,0.07)");
+      svg.appendChild(ring);
+    }
+
+    for(var i=0;i<n;i++){
+      var outer = pointFor(i,100);
+      var line = document.createElementNS(ns,"line");
+      line.setAttribute("x1",cx); line.setAttribute("y1",cy);
+      line.setAttribute("x2",outer.x); line.setAttribute("y2",outer.y);
+      line.setAttribute("stroke","rgba(255,255,255,0.09)");
+      svg.appendChild(line);
+
+      var labelPos = pointFor(i,122);
+      var text = document.createElementNS(ns,"text");
+      text.setAttribute("x",labelPos.x); text.setAttribute("y",labelPos.y);
+      text.setAttribute("text-anchor","middle");
+      text.setAttribute("dominant-baseline","middle");
+      text.setAttribute("fill","#65696f");
+      text.setAttribute("font-size","10");
+      text.setAttribute("font-family","JetBrains Mono, monospace");
+      text.textContent = dims[i].label;
+      svg.appendChild(text);
+    }
+
+    var dataPts = [];
+    for(var i=0;i<n;i++){
+      var p = pointFor(i, dims[i].value);
+      dataPts.push(p.x.toFixed(1)+","+p.y.toFixed(1));
+    }
+    var poly = document.createElementNS(ns,"polygon");
+    poly.setAttribute("points", dataPts.join(" "));
+    poly.setAttribute("fill","rgba(61,220,132,0.16)");
+    poly.setAttribute("stroke","#3ddc84");
+    poly.setAttribute("stroke-width","2");
+    poly.style.opacity="0";
+    poly.style.transformOrigin = cx+"px "+cy+"px";
+    poly.style.transform="scale(0.7)";
+    poly.style.transition="opacity .8s ease, transform .8s cubic-bezier(.16,1,.3,1)";
+    svg.appendChild(poly);
+    requestAnimationFrame(function(){ setTimeout(function(){ poly.style.opacity="1"; poly.style.transform="scale(1)"; }, 120); });
+
+    var tooltip = document.createElement("div");
+    tooltip.className = "svg-tooltip";
+    var box = document.querySelector(".radar-svg-box");
+    box.style.position = "relative";
+    box.appendChild(tooltip);
+
+    for(var i=0;i<n;i++){
+      var p = pointFor(i, dims[i].value);
+      var dot = document.createElementNS(ns,"circle");
+      dot.setAttribute("cx",p.x); dot.setAttribute("cy",p.y); dot.setAttribute("r","4.5");
+      dot.setAttribute("fill", dims[i].color);
+      dot.setAttribute("stroke","#0a0b0d"); dot.setAttribute("stroke-width","1.5");
+      dot.style.cursor="pointer";
+      (function(dim){
+        dot.addEventListener("mouseenter", function(){ tooltip.textContent = dim.label+": "+dim.value+"/100"; tooltip.classList.add("show"); });
+        dot.addEventListener("mousemove", function(e){
+          var rect = box.getBoundingClientRect();
+          tooltip.style.left = (e.clientX-rect.left)+"px";
+          tooltip.style.top = (e.clientY-rect.top)+"px";
+        });
+        dot.addEventListener("mouseleave", function(){ tooltip.classList.remove("show"); });
+      })(dims[i]);
+      svg.appendChild(dot);
+    }
+  }
+
+  /* ---------- Section 18: Success Probability ---------- */
+  function renderSection18(successProb, risks){
+    var circumference = 364;
+    var offset = circumference - (circumference*successProb/100);
+    var color = successProb >= 65 ? "#3ddc84" : successProb >= 40 ? "#e8a33d" : "#e8554d";
+    var fill = document.getElementById("successGaugeFill");
+    fill.setAttribute("stroke", color);
+    requestAnimationFrame(function(){ fill.style.strokeDashoffset = offset; });
+    animateNum(document.getElementById("successGaugeNum"), successProb);
+
+    var sortedRisks = risks.slice().sort(function(a,b){return b.value-a.value;});
+    var topRiskFactors = sortedRisks.slice(0,3).map(function(r){ return r.name + " (" + r.value + "/100)"; });
+    var growthFactors = [
+      answers.validation.length > 0 ? "Existing validation: " + answers.validation.join(", ") : null,
+      answers.teamsize !== "Solo Founder" ? "Multi-person team improves execution capacity" : null,
+      parseCompetitors().length === 0 ? "Limited direct competition identified" : null,
+      "Stated founder motivation: \"" + truncate(answers.why,50) + "\""
+    ].filter(Boolean);
+
+    var html = topRiskFactors.map(function(f){ return '<div class="factor-item risk"><span>⚠️</span><span>' + escapeHtml(f) + '</span></div>'; }).join("");
+    html += growthFactors.map(function(f){ return '<div class="factor-item growth"><span>📈</span><span>' + escapeHtml(f) + '</span></div>'; }).join("");
+    document.getElementById("successFactors").innerHTML = html;
+  }
+
+  /* ---------- Section 19: Investor Summary ---------- */
+  function renderSection19(verdictData, competitorRows){
+    document.getElementById("invProblem").textContent = answers.problem || "Not enough information provided.";
+    document.getElementById("invSolution").textContent = answers.idea || "Not enough information provided.";
+    document.getElementById("invMarket").textContent = "Target: " + (answers.market || "—") + " · Industry: " + (answers.industry || "—") + " (see Section 3 for sizing estimates)";
+    document.getElementById("invCompetition").textContent = competitorRows.length && competitorRows[0].name !== "No direct competitors identified"
+      ? competitorRows.map(function(c){return c.name;}).join(", ")
+      : "No direct competitors identified at time of this report.";
+    document.getElementById("invBizmodel").textContent = (answers.bizmodel || "—") + " · Pricing: " + (answers.pricing || "—");
+    document.getElementById("invTraction").textContent = answers.validation.length ? answers.validation.join(", ") + " · Stage: " + answers.stage : "No traction reported yet · Stage: " + (answers.stage || "—");
+    document.getElementById("invRisks").textContent = "See Section 13 for full risk matrix. Top concern: " + (function(){
+      return "execution and adoption risk at the " + (answers.stage || "current") + " stage";
+    })();
+    document.getElementById("invRecommendation").textContent = verdictData.verdict + " (composite score: " + verdictData.composite + "/100)";
+  }
+
+  /* ---------- Scroll reveal ---------- */
+  function setupRevealObserver(){
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll(".reveal").forEach(function(el){ observer.observe(el); });
+  }
+
+  /* ---------- Export / reset buttons ---------- */
+  function setupExportButtons(){
+    function wire(id, fn){
+      var el = document.getElementById(id);
+      if(el && !el._wired){ el.addEventListener("click", fn); el._wired = true; }
+    }
+    wire("btnPrint", function(){ window.print(); });
+    wire("exportPrint", function(){ window.print(); });
+    wire("exportPdf", function(){ window.print(); });
+    wire("btnDownload", downloadHtml);
+    wire("exportHtml", downloadHtml);
+    wire("btnEditAnswers", function(){
+      reportScreen.classList.remove("active");
+      wizardScreen.style.display = "flex";
+      currentStep = TOTAL_STEPS;
+      renderStep();
+    });
+    wire("btnReset", resetAll);
+    wire("exportReset", resetAll);
+  }
+
+  function downloadHtml(){
+    var blob = new Blob([document.documentElement.outerHTML], { type: "text/html" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = (answers.name || "startup-validation-report").replace(/[^a-z0-9\-]/gi,"_") + ".html";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function resetAll(){
+    if(!confirm("Reset all answers and start over? This cannot be undone.")) return;
+    try{ localStorage.removeItem(STORAGE_KEY); } catch(e){}
+    location.reload();
+  }
+
+})();
+</script>
+
+
+
+
+
+
